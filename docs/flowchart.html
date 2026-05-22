@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flowchart – Grace of Jesus Christ Ministries Registration System</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #f0f2f5;
+      --card: #ffffff;
+      --primary: #2c3e50;
+      --accent: #3498db;
+      --text: #333;
+      --muted: #777;
+      --border: #e0e0e0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: #fff;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+    .header p {
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    /* Tab Navigation */
+    .tab-nav {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      background: #fff;
+      border-bottom: 2px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .tab-btn {
+      padding: 14px 28px;
+      border: none;
+      background: transparent;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: var(--accent); }
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* Sections */
+    .section {
+      display: none;
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+    .section.active { display: block; }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    .section-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    /* Mermaid container */
+    .chart-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      overflow-x: auto;
+      margin-bottom: 2rem;
+    }
+    .chart-card .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+    .chart-card .mermaid svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 600px) {
+      .tab-btn { padding: 10px 14px; font-size: 0.82rem; }
+      .chart-card { padding: 1rem; }
+      .header h1 { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!--  HEADER                                            -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="header">
+    <h1>📊 System Flowchart</h1>
+    <p>Grace of Jesus Christ Ministries – Church Registration System</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!--  TAB NAVIGATION                                    -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="registration">📝 Registration Flow</button>
+    <button class="tab-btn" data-tab="admin">🔐 Admin Dashboard</button>
+    <button class="tab-btn" data-tab="data">🗄️ Data Architecture</button>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!--  SECTION 1: REGISTRATION FLOW                      -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section active" id="registration">
+    <h2 class="section-title">User Registration Flow</h2>
+    <p class="section-desc">
+      This flowchart shows the complete 3-step registration process that church visitors go through
+      when registering online at Grace of Jesus Christ Ministries – Kitintale.
+    </p>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#d4edda;border:1px solid #28a745;"></div> Start / End</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#cce5ff;border:1px solid #007bff;"></div> Process Step</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff3cd;border:1px solid #ffc107;"></div> Decision</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f8d7da;border:1px solid #dc3545;"></div> Validation Error</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e2d5f1;border:1px solid #6f42c1;"></div> External Service</div>
+    </div>
+
+    <div class="chart-card">
+      <div class="mermaid">
+flowchart TD
+    A([🌐 User Opens Registration Page]):::startEnd --> B[📄 Page Loads: Firebase Init\n+ Service Worker Registration\n+ Prefetch Existing Data]:::process
+
+    B --> C[Step 1: YOUR INFORMATION\n━━━━━━━━━━━━━━━━━━━━\n• Full Name *\n• Phone Number *\n• Residence *\n• First time? Yes / No]:::process
+
+    C --> D{User clicks\nNEXT →}:::decision
+
+    D --> E{Validate\nRequired Fields}:::decision
+
+    E -->|❌ Name empty| F[Show error:\nFull name is required]:::error
+    E -->|❌ Phone empty| G[Show error:\nPhone number is required]:::error
+    E -->|❌ Invalid phone| H[Show error:\nEnter valid Uganda number]:::error
+    E -->|❌ Location empty| I[Show error:\nResidence is required]:::error
+
+    F --> C
+    G --> C
+    H --> C
+    I --> C
+
+    E -->|✅ All valid| J{First-time\nregistration?}:::decision
+
+    J -->|Yes - First Timer| K[Step 2: HOW YOU CAN SERVE\n━━━━━━━━━━━━━━━━━━━━━━━\n• Birthday Day + Month\n• Volunteering Options:\n  ☐ Ushering\n  ☐ Choir\n  ☐ Playing Instruments\n  ☐ Venue Management\n  ☐ Other\n• WhatsApp Group Consent\n• How did you hear about us?]:::process
+
+    J -->|No - Returning| L[Build Entry Object\nname, phone, location\ntype: Returning]:::process
+
+    K --> M{User clicks\nNEXT →}:::decision
+    M --> N[Build Entry Object\nname, phone, location, birthday\nvolunteering, consent, referral]:::process
+
+    L --> O[Step 3: CONFIRM YOUR DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━\nReview all entered information\n• Name, Phone, Residence\n• Birthday with countdown\n• Registration Type\n• Volunteer choices\n• WhatsApp preference]:::process
+
+    N --> O
+
+    O --> P{User Action}:::decision
+
+    P -->|← Back to Edit| Q{First-time?}:::decision
+    Q -->|Yes| K
+    Q -->|No| C
+
+    P -->|Save Registration ✓| R[Disable Save Button\nShow Saving... spinner]:::process
+
+    R --> S[Get Weekly Blessing Verse]:::process
+    S --> T{Check for\nDuplicate Phone}:::decision
+
+    T --> U[Check Firebase Firestore\nby document ID]:::external
+    U --> V{Doc exists?}:::decision
+    V -->|Yes| W[Mark as RETURNING]:::process
+    V -->|No| X[Query Firestore by\nphone field]:::external
+    X --> Y{Match found?}:::decision
+    Y -->|Yes| W
+    Y -->|No| Z[Check local cache\nallRegistrations array]:::process
+    Z --> AA{Match in\ncache?}:::decision
+    AA -->|Yes| W
+    AA -->|No| AB[Mark as NEW registration]:::process
+
+    AB --> AC[Save to Firebase Firestore\nwith server timestamp]:::external
+    AC --> AD[Submit to Google Sheets\nvia hidden form POST\nto Apps Script]:::external
+
+    AD --> AE[Generate WhatsApp Message:\n• Greeting with name\n• Weekly blessing verse\n• Church program schedule\n• WhatsApp group link\n• YouTube channel link]:::process
+
+    AE --> AF[Open WhatsApp\nwa.me link in new tab]:::external
+
+    AF --> AG[Show Blessing Overlay:\nThank You for Registering!\n+ Blessing verse\n+ WhatsApp fallback link]:::startEnd
+
+    W --> AH[Show Blessing Overlay:\nWelcome Back!\nYou are already registered\n+ Blessing verse]:::startEnd
+
+    AG --> AI{User clicks\nAmen 🙏}:::decision
+    AH --> AI
+
+    AI --> AJ[Reset Form:\nClear all fields\nReturn to Step 1\nRefresh cached data]:::process
+    AJ --> C
+
+    classDef startEnd fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#155724
+    classDef process fill:#cce5ff,stroke:#007bff,stroke-width:1.5px,color:#004085
+    classDef decision fill:#fff3cd,stroke:#ffc107,stroke-width:2px,color:#856404
+    classDef error fill:#f8d7da,stroke:#dc3545,stroke-width:1.5px,color:#721c24
+    classDef external fill:#e2d5f1,stroke:#6f42c1,stroke-width:1.5px,color:#4a1a8a
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!--  SECTION 2: ADMIN DASHBOARD FLOW                   -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section" id="admin">
+    <h2 class="section-title">Admin Dashboard Flow</h2>
+    <p class="section-desc">
+      This flowchart shows the admin dashboard workflow including authentication,
+      member management, media library, and church program schedule management.
+    </p>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#d4edda;border:1px solid #28a745;"></div> Start / End</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#cce5ff;border:1px solid #007bff;"></div> Process</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff3cd;border:1px solid #ffc107;"></div> Decision</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e2d5f1;border:1px solid #6f42c1;"></div> Firebase Service</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fce4ec;border:1px solid #e91e63;"></div> Action</div>
+    </div>
+
+    <div class="chart-card">
+      <div class="mermaid">
+flowchart TD
+    A([🔐 Admin Opens Dashboard]):::startEnd --> B{Firebase Auth\nCheck Session}:::decision
+
+    B -->|Not Authenticated| C[Show Login Overlay\n• Email input\n• Password input\n• Remember Email checkbox]:::process
+    B -->|Authenticated| F
+
+    C --> D{Submit\nCredentials}:::decision
+    D -->|❌ Invalid| E[Show Login Error]:::error
+    E --> C
+    D -->|✅ Valid| F[Load Dashboard\nHide Auth Overlay]:::process
+
+    F --> G[Fetch All Registrations\nfrom Firestore + Google Sheets]:::external
+
+    G --> H[Render Dashboard Stats:\n• Total Members count\n• First-Timers count\n• WhatsApp Members count\n• Joined This Week count]:::process
+
+    H --> I[Render Charts:\n📊 Registration Trend\n📊 Ministry Distribution]:::process
+
+    I --> J[Check Upcoming Birthdays\nnext 7 days alert]:::process
+
+    J --> K[Populate Members Table\nwith all registration data]:::process
+
+    K --> L{Admin Selects\nDashboard Tab}:::decision
+
+    L -->|👥 Members| M[MEMBERS SECTION\n━━━━━━━━━━━━━━━━]:::process
+    L -->|🖼 Media| S[MEDIA SECTION\n━━━━━━━━━━━━━━]:::process
+    L -->|📅 Programs| Y[PROGRAMS SECTION\n━━━━━━━━━━━━━━━━]:::process
+
+    M --> N{Member\nAction}:::decision
+    N -->|🔍 Search| O[Filter table by\nname, phone, location]:::process
+    N -->|📂 Filter Ministry| P[Filter by: All, Ushers,\nChoir, Instruments,\nVenue Mgmt, Others]:::process
+    N -->|✏️ Edit Member| Q[Open Edit Modal\nModify member details\nSave to Firestore]:::external
+    N -->|🗑️ Delete Member| R[Confirm deletion\nRemove from Firestore\n+ Google Sheets]:::external
+    N -->|⬇️ Export CSV| R2[Generate CSV file\nDownload all members]:::process
+
+    O --> K
+    P --> K
+    Q --> K
+    R --> K
+    R2 --> L
+
+    S --> T{Media\nAction}:::decision
+    T -->|📤 Upload| U[Select Category:\nGeneral, Events, Sermons,\nCounseling, Blessings\n→ Choose Image files\n→ Upload to Firebase Storage]:::external
+    T -->|🗑️ Delete| V[Remove image from\nFirebase Storage +\nFirestore metadata]:::external
+    T -->|🔍 Filter| W[Filter by category]:::process
+
+    U --> X[Refresh Media Grid]:::process
+    V --> X
+    W --> X
+    X --> L
+
+    Y --> Z[Edit Church Programs:\n• Sunday Services time\n• Monday Kyoto Prayers\n• Wednesday Evening Glory\n• Tue/Thu Counseling\n• Friday Night Prayers\n• Additional Program\n• WhatsApp Group Link]:::process
+
+    Z --> ZA{Save\nSchedule}:::decision
+    ZA --> ZB[Save to Firestore\nsettings/programs doc]:::external
+    ZB --> ZC[Programs reflected in\nWhatsApp messages to\nnew registrants]:::process
+    ZC --> L
+
+    AA([Admin Logout]):::startEnd
+    L -->|🚪 Logout| AA
+
+    classDef startEnd fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#155724
+    classDef process fill:#cce5ff,stroke:#007bff,stroke-width:1.5px,color:#004085
+    classDef decision fill:#fff3cd,stroke:#ffc107,stroke-width:2px,color:#856404
+    classDef error fill:#f8d7da,stroke:#dc3545,stroke-width:1.5px,color:#721c24
+    classDef external fill:#e2d5f1,stroke:#6f42c1,stroke-width:1.5px,color:#4a1a8a
+    classDef action fill:#fce4ec,stroke:#e91e63,stroke-width:1.5px,color:#880e4f
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!--  SECTION 3: DATA ARCHITECTURE                      -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="section" id="data">
+    <h2 class="section-title">Data Architecture & System Overview</h2>
+    <p class="section-desc">
+      This diagram shows how data flows between the different components of the church registration system,
+      including the frontend, Firebase services, Google Sheets, and WhatsApp integration.
+    </p>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#dcedc8;border:1px solid #689f38;"></div> Frontend</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff9c4;border:1px solid #f9a825;"></div> Firebase Services</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e1bee7;border:1px solid #8e24aa;"></div> Google Services</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#b3e5fc;border:1px solid #0288d1;"></div> External APIs</div>
+    </div>
+
+    <div class="chart-card">
+      <div class="mermaid">
+flowchart TD
+    subgraph FRONTEND["🖥️ FRONTEND - Web Application"]
+        direction TB
+        A[index.html\nRegistration Page\n3-Step Form]:::frontend
+        B[dashboard.html\nAdmin Dashboard\nMembers / Media / Programs]:::frontend
+        C[../js/app.js\nRegistration Logic\nValidation + Save]:::frontend
+        D[../js/dashboard.js\nDashboard Logic\nCRUD + Charts + Export]:::frontend
+        E[../js/utils.js\nShared Utilities\nFormatting + Verses]:::frontend
+        F[sw.js\nService Worker\nOffline Support / PWA]:::frontend
+    end
+
+    subgraph FIREBASE["🔥 FIREBASE SERVICES"]
+        direction TB
+        G[Firebase Auth\nAdmin Authentication\nEmail + Password]:::firebase
+        H[Cloud Firestore\n━━━━━━━━━━━━━━━\nregistrations collection\nsettings/programs doc\nmedia metadata]:::firebase
+        I[Firebase Storage\nMedia Library\nImage uploads]:::firebase
+        J[Firebase Hosting\nWeb App Deployment\nchurch-registration-grace.web.app]:::firebase
+    end
+
+    subgraph GOOGLE["📊 GOOGLE SERVICES"]
+        direction TB
+        K[Google Apps Script\nPOST endpoint\ndoPost handler]:::google
+        L[Google Sheets\nBackup Database\nAll registrations]:::google
+    end
+
+    subgraph EXTERNAL["📱 EXTERNAL INTEGRATIONS"]
+        direction TB
+        M[WhatsApp API\nwa.me deep link\nWelcome message]:::ext
+        N[YouTube Channel\n@encounter_GJM\nSubscription link]:::ext
+    end
+
+    A -->|"User submits form"| C
+    C -->|"Save registration"| H
+    C -->|"Hidden form POST"| K
+    K -->|"Append row"| L
+    C -->|"Open welcome msg"| M
+    C -->|"Prefetch data"| H
+    C -->|"Fetch backup data"| K
+
+    B -->|"Admin actions"| D
+    D -->|"Auth check"| G
+    D -->|"CRUD operations"| H
+    D -->|"Upload/delete images"| I
+    D -->|"Fetch registrations"| K
+    D -->|"Export CSV"| L
+
+    E -.->|"Imported by"| C
+    E -.->|"Imported by"| D
+
+    J -->|"Serves"| A
+    J -->|"Serves"| B
+
+    H -->|"Real-time data"| D
+    L -->|"GET data"| C
+
+    classDef frontend fill:#dcedc8,stroke:#689f38,stroke-width:1.5px,color:#33691e
+    classDef firebase fill:#fff9c4,stroke:#f9a825,stroke-width:1.5px,color:#f57f17
+    classDef google fill:#e1bee7,stroke:#8e24aa,stroke-width:1.5px,color:#4a148c
+    classDef ext fill:#b3e5fc,stroke:#0288d1,stroke-width:1.5px,color:#01579b
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!--  FOOTER                                            -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="footer">
+    <p>Grace of Jesus Christ Ministries – Kitintale, Kampala, Uganda</p>
+    <p>System Flowchart • Generated March 2026</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!--  SCRIPTS                                           -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <script>
+    // Initialize Mermaid
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#cce5ff',
+        primaryTextColor: '#004085',
+        primaryBorderColor: '#007bff',
+        lineColor: '#6c757d',
+        secondaryColor: '#fff3cd',
+        tertiaryColor: '#d4edda',
+        fontSize: '14px',
+        fontFamily: '"Segoe UI", "Inter", system-ui, sans-serif'
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 15,
+        nodeSpacing: 30,
+        rankSpacing: 40,
+        useMaxWidth: true
+      }
+    });
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>

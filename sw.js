@@ -3,10 +3,10 @@ const ASSETS = [
   '/',
   '/index.html',
   '/dashboard.html',
-  '/style.css',
+  '/css/style.css',
   '/js/utils.js',
-  '/church logo/New Logo 2026.png',
-  '/church logo/Banner.png'
+  '/assets/logo/New Logo 2026.png',
+  '/assets/logo/Banner.png'
 ];
 
 const STATIC_ASSETS = [

@@ -1,772 +1,253 @@
-// js/dashboard.js — Admin Dashboard · Grace of Jesus Christ Ministries
-import {
-  isUpcomingBirthday,
-  getDaysUntilBirthday,
-  formatBirthday
-} from './utils.js';
+const firebaseConfig = {
+  apiKey: "AIzaSyD2xFPG6X7K2xFPG6X7K2xFPG6X7K2xFPG",
+  authDomain: "church-registration-grace.firebaseapp.com",
+  projectId: "church-registration-grace",
+  storageBucket: "church-registration-grace.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abc123456"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-/* ── Constants ───────────────────────────────────────────────
-   Same GAS deployment handles GET (doGet) and POST (doPost).
-   Split into separate constants so either can be updated independently.
-   ─────────────────────────────────────────────────────────── */
-const GET_DATA_API_URL  = 'https://script.google.com/macros/s/AKfycbxep7hhQKPfuPBG9q9oig8D892E2d4bdBdPvGct48jlAFIUP6bmSu06tIbbl-6pmISsOQ/exec';
-const SAVE_DATA_API_URL = 'https://script.google.com/macros/s/AKfycbxep7hhQKPfuPBG9q9oig8D892E2d4bdBdPvGct48jlAFIUP6bmSu06tIbbl-6pmISsOQ/exec';
-
-/* ── DOM refs ────────────────────────────────────────────── */
-const tableBody           = document.getElementById('tableBody');
-const searchBar           = document.getElementById('searchBar');
-const exportBtn           = document.getElementById('exportBtn');
-const totalCount          = document.getElementById('totalCount');
-const saveProgramsBtn     = document.getElementById('saveProgramsBtn');
-const birthdayAlerts      = document.getElementById('birthdayAlerts');
-const birthdayList        = document.getElementById('birthdayList');
-const editModal           = document.getElementById('editModal');
-const saveEditBtn         = document.getElementById('saveEditBtn');
-const cancelEditBtn       = document.getElementById('cancelEditBtn');
-const viewTabs            = document.getElementById('viewTabs');
-const authOverlay         = document.getElementById('authOverlay');
-const loginForm           = document.getElementById('loginForm');
-const loginBtn            = document.getElementById('loginBtn');
-const logoutBtn           = document.getElementById('logoutBtn');
-const loginError          = document.getElementById('loginError');
-const rememberMe          = document.getElementById('rememberMe');
-const mediaGrid           = document.getElementById('mediaGrid');
-const fileInput           = document.getElementById('fileInput');
-const uploadBtn           = document.getElementById('uploadBtn');
-const mediaCategoryInput  = document.getElementById('mediaCategory');
-const filterMediaCategory = document.getElementById('filterMediaCategory');
-const uploadProgressBar   = document.getElementById('uploadProgressBar');
-const uploadProgressDiv   = document.getElementById('uploadProgress');
-const uploadStatus        = document.getElementById('uploadStatus');
-
-/* ── State ──────────────────────────────────────────────── */
+let allMembers = [];
 let allRegistrations = [];
-let allMedia         = [];
-let db               = null;
-let storage          = null;
-let editingId        = null;
-let currentFilter    = 'all';
-let regChart         = null;
-let ministryChart    = null;
+let isLoggedIn = false;
 
-/* ── Data normaliser ─────────────────────────────────────
-   Collapses mixed-case field names from Firestore & Sheets
-   into a single consistent shape. Run once after fetch.
-   ─────────────────────────────────────────────────────── */
-function normalise(reg) {
-  return {
-    id:              reg.id || null,
-    name:            reg.name         || reg.Name         || 'Unknown',
-    phone:           reg.phone        || reg.Phone        || '—',
-    location:        reg.location     || reg.Location     ||
-                    reg.residence    || reg.Residence    || '—',
-    birthDay:        reg.birthDay    || reg.birthday     || reg['Birth Day']    || '',
-    birthMonth:      reg.birthMonth  || reg.birthmonth   || reg['Birth Month']  || '',
-    firstTime:       String(reg.registered || reg.Registered ||
-                         reg.firstTime  || reg.firsttime  || '').toLowerCase(),
-    volunteering:    reg.volunteering || reg.Volunteering || '',
-    referredBy:      reg.referredBy   || reg.referredby   || reg['Referred By']  || '—',
-    whatsapp:        reg.whatsapp     || reg.Whatsapp     || '',
-    timestamp:       reg.timestamp    || reg.date         || reg.DATE || reg.Timestamp || null,
-    registrationType: reg.registrationType || reg.registrationtype || 'general',
-    groomName:       reg.groomName    || '',
-    brideName:       reg.brideName    || '',
-    weddingDate:     reg.weddingDate  || '',
-    baptismDate:     reg.baptismDate  || '',
-    ageGroup:        reg.ageGroup     || '',
-    deceasedName:    reg.deceasedName || '',
-    funeralDate:     reg.funeralDate  || '',
-    contactPerson:   reg.contactPerson|| '',
-    counselingTopic: reg.counselingTopic|| '',
-    preferredDate:   reg.preferredDate|| '',
-    status:          reg.status       || 'pending',
-    attendedDate:    reg.attendedDate || null,
-    _source:         reg.id ? 'firestore' : 'sheets'
-  };
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+// Initialize based on stored login state
+if (localStorage.getItem('dashboardLoggedIn') === 'true') {
+  isLoggedIn = true;
+  document.getElementById('adminBtn').textContent = 'Logout';
 }
 
-/* ── Phone key helper (last 9 digits, digits only) ────── */
-function phoneKey(phone) {
+function showSection(section) {
+  document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + section).classList.add('active');
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  const activeItem = document.querySelector('[data-section="' + section + '"]');
+  if (activeItem) activeItem.classList.add('active');
+  
+  if (section === 'dashboard') loadDashboard();
+  if (section === 'members') loadMembers();
+  if (section === 'events') loadEvents();
+  if (section === 'pastoral') loadCare();
+  if (section === 'communications') loadAnnouncements();
+  if (section === 'programs') loadPrograms();
+}
+
+function showLoginModal() { document.getElementById('loginModal').classList.add('show'); }
+function hideLoginModal() { document.getElementById('loginModal').classList.remove('show'); }
+
+document.getElementById('loginForm').onsubmit = function(e) {
+  e.preventDefault();
+  isLoggedIn = true;
+  localStorage.setItem('dashboardLoggedIn', 'true');
+  hideLoginModal();
+  document.getElementById('adminBtn').textContent = 'Logout';
+  showSection('dashboard');
+};
+
+function handleAdminBtn() {
+  if (isLoggedIn) {
+    isLoggedIn = false;
+    localStorage.removeItem('dashboardLoggedIn');
+    document.getElementById('adminBtn').textContent = 'Admin Login';
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('section-dashboard').classList.add('active');
+  } else {
+    showLoginModal();
+  }
+}
+
+async function loadDashboard() {
+  try {
+    const snapshot = await db.collection('registrations').get();
+    allRegistrations = snapshot.docs.map(d => {
+      const data = d.data();
+      return {
+        id: d.id,
+        ...data,
+        status: data.status || 'active'
+      };
+    });
+    const members = allRegistrations.filter(r => r.status === 'active');
+    const newRegs = allRegistrations.filter(r => r.status === 'new' || r.status === 'pending');
+
+    document.getElementById('totalMembers').textContent = members.length;
+    document.getElementById('newRegistrations').textContent = newRegs.length;
+
+    document.getElementById('recentRegistrations').innerHTML = allRegistrations.slice(0, 5).map(r => 
+      '<tr><td>' + (r.name || '-') + '</td><td>' + (r.phone || '-') + '</td><td>' + (r.department || r.registrationType || '-') + '</td><td>' + (r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '-') + '</td><td><span class="status-badge ' + (r.status || 'active') + '">' + (r.status || 'active') + '</span></td></tr>'
+    ).join('');
+
+    const attendance = JSON.parse(localStorage.getItem('today_attendance') || '[]');
+    const rate = members.length > 0 ? Math.round((attendance.length / members.length) * 100) : 0;
+    document.getElementById('attendanceRate').textContent = rate + '%';
+    document.getElementById('upcomingEvents').textContent = '5';
+  } catch (e) {
+    console.error('Dashboard load error:', e);
+  }
+}
+
+async function loadMembers() {
+  try {
+    const snapshot = await db.collection('registrations').get();
+    allMembers = snapshot.docs.map(d => {
+      const data = d.data();
+      return { id: d.id, ...data, status: data.status || 'active' };
+    });
+    renderMembers(allMembers);
+  } catch (e) {
+    console.error('Error loading members:', e);
+    document.getElementById('membersTable').innerHTML = '<tr><td colspan="6" style="text-align:center;color:#e74c3c">Error loading members</td></tr>';
+  }
+}
+
+function renderMembers(members) {
+  document.getElementById('membersTable').innerHTML = members.map(m => 
+    '<tr><td><input type="checkbox" class="attend-checkbox" data-phone="' + cleanPhone(m.phone) + '"> ' + (m.name || '-') + '</td><td>' + (m.phone || '-') + '</td><td>' + (m.department || '-') + '</td><td>' + (m.createdAt ? new Date(m.createdAt).toLocaleDateString() : '-') + '</td><td><span class="status-badge ' + (m.status || 'active') + '">' + (m.status || 'active') + '</span></td><td><button class="action-btn view">View</button><button class="action-btn edit">Edit</button></td></tr>'
+  ).join('');
+  
+  let saveBtn = document.getElementById('saveAttendanceBtn');
+  if (!saveBtn) {
+    saveBtn = document.createElement('button');
+    saveBtn.id = 'saveAttendanceBtn';
+    saveBtn.className = 'btn-primary';
+    saveBtn.style.marginTop = '15px';
+    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Attendance';
+    saveBtn.onclick = saveAttendance;
+    document.getElementById('membersTable').parentElement.appendChild(saveBtn);
+  }
+}
+
+function searchMembers() {
+  const q = document.getElementById('memberSearch').value.toLowerCase();
+  renderMembers(allMembers.filter(m => (m.name || '').toLowerCase().includes(q)));
+}
+
+function filterMembers() {
+  const d = document.getElementById('departmentFilter').value;
+  renderMembers(d ? allMembers.filter(m => m.department === d) : allMembers);
+}
+
+async function loadEvents() {
+  document.getElementById('eventsGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-value">Sunday Service</div><div class="stat-label">Every Sunday 8:00 AM</div></div>
+    <div class="stat-card"><div class="stat-value">Monday Kyoto</div><div class="stat-label">7:00-9:00 AM</div></div>
+    <div class="stat-card"><div class="stat-value">Wed Glory</div><div class="stat-label">6:00-7:00 PM</div></div>
+    <div class="stat-card"><div class="stat-value">Counseling</div><div class="stat-label">Tue/Thu 7AM-3PM</div></div>
+    <div class="stat-card"><div class="stat-value">Friday Prayers</div><div class="stat-label">9PM-2AM</div></div>
+  `;
+}
+
+let adminPrograms = [];
+
+function showProgramModal(index) {
+  document.getElementById('programModal').classList.add('show');
+  if (index !== undefined && adminPrograms[index]) {
+    document.getElementById('progIndex').value = index;
+    document.getElementById('progIcon').value = adminPrograms[index].icon || '';
+    document.getElementById('progTitle').value = adminPrograms[index].title || '';
+    document.getElementById('progDate').value = adminPrograms[index].date || '';
+    document.getElementById('progTime').value = adminPrograms[index].time || '';
+    document.getElementById('progDesc').value = adminPrograms[index].description || '';
+  } else {
+    document.getElementById('programForm').reset();
+    document.getElementById('progIndex').value = '';
+  }
+}
+
+function hideProgramModal() {
+  document.getElementById('programModal').classList.remove('show');
+}
+
+document.getElementById('programForm').onsubmit = function(e) {
+  e.preventDefault();
+  const index = document.getElementById('progIndex').value;
+  const prog = {
+    icon: document.getElementById('progIcon').value.trim(),
+    title: document.getElementById('progTitle').value.trim(),
+    date: document.getElementById('progDate').value.trim(),
+    time: document.getElementById('progTime').value.trim(),
+    description: document.getElementById('progDesc').value.trim()
+  };
+  if (index !== '') {
+    adminPrograms[Number(index)] = prog;
+  } else {
+    adminPrograms.push(prog);
+  }
+  savePrograms();
+  renderPrograms();
+  hideProgramModal();
+};
+
+function renderPrograms() {
+  document.getElementById('programsTable').innerHTML = adminPrograms.map((p, i) =>
+    '<tr><td><i class="fas ' + (p.icon || 'fa-calendar') + '"></i></td><td>' + (p.title || '-') + '</td><td>' + (p.date || '-') + '</td><td>' + (p.time || '-') + '</td><td>' + (p.description || '-') + '</td><td><button class="action-btn edit" onclick="showProgramModal(' + i + ')">Edit</button><button class="action-btn delete" onclick="deleteProgram(' + i + ')">Delete</button></td></tr>'
+  ).join('');
+}
+
+function deleteProgram(index) {
+  if (confirm('Delete this program?')) {
+    adminPrograms.splice(index, 1);
+    savePrograms();
+    renderPrograms();
+  }
+}
+
+async function loadPrograms() {
+  try {
+    const snap = await db.collection('settings').doc('programs').get();
+    if (snap.exists && snap.data().upcoming) {
+      adminPrograms = snap.data().upcoming;
+    }
+  } catch (e) {
+    console.warn('Could not load programs from Firestore:', e);
+  }
+  renderPrograms();
+}
+
+function savePrograms() {
+  db.collection('settings').doc('programs').set({ upcoming: adminPrograms, updatedAt: new Date().toISOString() })
+    .catch(e => console.warn('Save programs error:', e));
+}
+
+async function loadCare() {
+  document.getElementById('careTable').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#6c757d">No care requests</td></tr>';
+}
+
+function showCareModal() { alert('Pastoral care form coming soon'); }
+async function loadAnnouncements() { document.getElementById('announcementsTable').innerHTML = ''; }
+function showAnnouncementModal() { alert('Announcement form coming soon'); }
+function showComTab(tab) {
+  document.querySelectorAll('[id^="com-"]').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('com-' + tab).style.display = 'block';
+  document.querySelector('[data-comtab="' + tab + '"]').classList.add('active');
+}
+function sendWhatsApp() { alert('WhatsApp integration coming soon'); }
+function saveAttendance() {
+  const checkboxes = document.querySelectorAll('.attend-checkbox:checked');
+  const attendance = Array.from(checkboxes).map(cb => cb.dataset.phone);
+  localStorage.setItem('today_attendance', JSON.stringify(attendance));
+  alert('Attendance saved! (' + attendance.length + ' present)');
+}
+
+function cleanPhone(phone) {
   return String(phone || '').replace(/\D/g, '').slice(-9);
 }
 
-/* ── Toast notifications ─────────────────────────────── */
-function toast(msg, type = 'success', duration = 3500) {
-  const container = document.getElementById('toastContainer');
-  const el = document.createElement('div');
-  el.className = `toast toast--${type}`;
-  el.textContent = msg;
-  container.appendChild(el);
-  requestAnimationFrame(() => el.classList.add('toast--show'));
-  setTimeout(() => {
-    el.classList.remove('toast--show');
-    el.addEventListener('transitionend', () => el.remove(), { once: true });
-  }, duration);
-}
-
-/* ── Section tabs ────────────────────────────────────── */
-document.querySelectorAll('.section-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(tab.dataset.section).classList.add('active');
-  });
-});
-
-/* ── Stat cards ──────────────────────────────────────── */
-function updateStatCards(data) {
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-  document.getElementById('stat-total').textContent =
-    data.length;
-  document.getElementById('stat-firsttimers').textContent =
-    data.filter(r => r.firstTime === 'yes').length;
-  document.getElementById('stat-whatsapp').textContent =
-    data.filter(r => r.whatsapp && r.whatsapp !== '—').length;
-  document.getElementById('stat-week').textContent =
-    data.filter(r => r.timestamp && new Date(r.timestamp) >= oneWeekAgo).length;
-}
-
-/* ── Password show / hide ────────────────────────────── */
-document.getElementById('togglePassword').addEventListener('click', () => {
-  const pwd = document.getElementById('loginPassword');
-  const btn = document.getElementById('togglePassword');
-  const isHidden = pwd.type === 'password';
-  pwd.type = isHidden ? 'text' : 'password';
-  btn.textContent = isHidden ? '🙈' : '👁';
-  btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
-});
-
-/* ── Authentication ──────────────────────────────────── */
-window.addEventListener('load', () => {
-  const saved = localStorage.getItem('church_admin_email');
-  if (saved) {
-    document.getElementById('loginEmail').value = saved;
-    rememberMe.checked = true;
-  }
-  if (typeof firebase !== 'undefined') initAuth();
-});
-
-function initAuth() {
-  authOverlay.style.display = 'flex';
-  firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      authOverlay.style.display = 'none';
-      if (!db)      db      = firebase.firestore();
-      if (!storage) storage = firebase.storage();
-      fetchRegistrations();
-      fetchMedia();
-    } else {
-      authOverlay.style.display = 'flex';
-      allRegistrations = [];
-      allMedia         = [];
-      renderTable([]);
-      renderMedia([]);
+// Sidebar click handlers
+document.querySelectorAll('.sidebar-item[data-section]').forEach(item => {
+  item.addEventListener('click', () => {
+    if (!isLoggedIn) {
+      showLoginModal();
+      return;
     }
+    showSection(item.dataset.section);
   });
-}
-
-loginForm.addEventListener('submit', async e => {
-  e.preventDefault();
-  const email = document.getElementById('loginEmail').value.trim();
-  const pass  = document.getElementById('loginPassword').value;
-  loginError.style.display = 'none';
-
-  if (!email || !pass) {
-    loginError.textContent = 'Please enter email and password.';
-    loginError.style.display = 'block';
-    return;
-  }
-
-  rememberMe.checked
-    ? localStorage.setItem('church_admin_email', email)
-    : localStorage.removeItem('church_admin_email');
-
-  try {
-    loginBtn.disabled    = true;
-    loginBtn.textContent = 'Logging in…';
-    await firebase.auth().signInWithEmailAndPassword(email, pass);
-  } catch (err) {
-    loginError.textContent   = 'Login failed: ' + err.message;
-    loginError.style.display = 'block';
-  } finally {
-    loginBtn.disabled    = false;
-    loginBtn.textContent = 'Access Dashboard';
-  }
 });
 
-logoutBtn.addEventListener('click', () => firebase.auth().signOut());
-
-/* ── Registrations fetch ──────────────────────────────
-   Deduplication strategy:
-   1. Firestore is the source of truth.
-   2. Google Sheets rows are merged in only if their
-      phone key (last 9 digits) is not already present.
-   This ensures NO duplicates in allRegistrations.
-   ─────────────────────────────────────────────────── */
-async function fetchRegistrations() {
-  try {
-    let fireData = [];
-
-    if (db) {
-      const snap = await db.collection('registrations').orderBy('timestamp', 'desc').get();
-      fireData = snap.docs.map(doc => {
-        const d = doc.data();
-        d.id = doc.id;
-        if (d.timestamp?.toDate) d.timestamp = d.timestamp.toDate();
-        return normalise(d);
-      });
-
-      const progDoc = await db.collection('settings').doc('programs').get();
-      if (progDoc.exists) loadProgramFields(progDoc.data());
-    }
-
-    // Merge Sheets data — skip any phone already in Firestore set
-    const firestoreKeys = new Set(fireData.map(r => phoneKey(r.phone)));
-
-    const res = await fetch(GET_DATA_API_URL);
-    if (res.ok) {
-      const sheetData = await res.json();
-      sheetData.forEach(reg => {
-        if (reg.name === 'SYSTEM_PROGRAMS') {
-          if (fireData.length === 0) {
-            try { loadProgramFields(JSON.parse(reg.location)); } catch {}
-          }
-          return;
-        }
-        const key = phoneKey(reg.phone || reg.Phone);
-        if (!firestoreKeys.has(key)) {
-          firestoreKeys.add(key);          // prevent Sheet duplicates too
-          fireData.push(normalise(reg));
-        }
-      });
-    }
-
-    allRegistrations = fireData;
-    renderTable(allRegistrations);
-    displayBirthdayAlerts(allRegistrations);
-    updateCharts(allRegistrations);
-    updateStatCards(allRegistrations);
-  } catch (err) {
-    console.error('Fetch error:', err);
-    tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:red;">Error loading data. ${err.message}</td></tr>`;
-  }
-}
-
-function loadProgramFields(progs) {
-  document.getElementById('prog-sunday').value        = progs.sunday        || '';
-  document.getElementById('prog-monday').value        = progs.monday        || '';
-  document.getElementById('prog-wednesday').value     = progs.wednesday     || 'Evening Glory 5pm-7pm';
-  document.getElementById('prog-tue-thu').value       = progs.tueThu        || '';
-  document.getElementById('prog-friday').value        = progs.friday        || '';
-  document.getElementById('prog-custom').value        = progs.custom        || '';
-  document.getElementById('prog-whatsapp-link').value = progs.whatsappLink  || '';
-}
-
-/* ── Birthday alerts ─────────────────────────────────── */
-function displayBirthdayAlerts(data) {
-  const upcoming = data
-    .filter(r => isUpcomingBirthday(r.birthMonth, r.birthDay))
-    .sort((a, b) =>
-      getDaysUntilBirthday(a.birthMonth, a.birthDay) -
-      getDaysUntilBirthday(b.birthMonth, b.birthDay)
-    );
-
-  if (!upcoming.length) { birthdayAlerts.style.display = 'none'; return; }
-
-  birthdayAlerts.style.display = 'block';
-  birthdayList.innerHTML = upcoming.map(r => {
-    const days = getDaysUntilBirthday(r.birthMonth, r.birthDay);
-    const label = days === 0 ? 'Today! 🎂' : `in ${days} day${days === 1 ? '' : 's'}`;
-    return `
-      <div class="birthday-alert-item">
-        <strong>${r.name}</strong> — ${formatBirthday(r.birthMonth, r.birthDay)}
-        <span class="birthday-tag">${label}</span>
-        ${r.whatsapp ? `<br><small style="color:#666;">📱 ${r.whatsapp}</small>` : ''}
-      </div>`;
-  }).join('');
-}
-
-/* ── Programs save ───────────────────────────────────── */
-saveProgramsBtn.addEventListener('click', async () => {
-  const progs = {
-    sunday:       document.getElementById('prog-sunday').value.trim(),
-    monday:       document.getElementById('prog-monday').value.trim(),
-    wednesday:    document.getElementById('prog-wednesday').value.trim(),
-    tueThu:       document.getElementById('prog-tue-thu').value.trim(),
-    friday:       document.getElementById('prog-friday').value.trim(),
-    custom:       document.getElementById('prog-custom').value.trim()        || null,
-    whatsappLink: document.getElementById('prog-whatsapp-link').value.trim() || null
-  };
-
-  saveProgramsBtn.disabled    = true;
-  saveProgramsBtn.textContent = 'Saving…';
-
-  try {
-    if (db) await db.collection('settings').doc('programs').set(progs);
-
-    const params = new URLSearchParams({
-      name: 'SYSTEM_PROGRAMS', phone: '000',
-      location: JSON.stringify(progs), whatsapp: '', prayers: ''
-    });
-    await fetch(SAVE_DATA_API_URL, { method: 'POST', body: params.toString() });
-
-    toast('Schedule saved successfully!');
-  } catch (err) {
-    toast('Error saving schedule: ' + err.message, 'error');
-  } finally {
-    saveProgramsBtn.disabled    = false;
-    saveProgramsBtn.textContent = 'Save Schedule';
-  }
-});
-
-/* ── Charts ──────────────────────────────────────────── */
-function updateCharts(data) {
-  const today   = new Date();
-  const last7   = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(today);
-    d.setDate(today.getDate() - (6 - i));
-    return d.toLocaleDateString('en-US', { weekday: 'short' });
-  });
-  const counts  = new Array(7).fill(0);
-  data.forEach(r => {
-    if (!r.timestamp) return;
-    const diff = Math.floor((today - new Date(r.timestamp)) / 86400000);
-    if (diff >= 0 && diff < 7) counts[6 - diff]++;
-  });
-
-  if (regChart) regChart.destroy();
-  regChart = new Chart(document.getElementById('registrationChart').getContext('2d'), {
-    type: 'line',
-    data: {
-      labels: last7,
-      datasets: [{ label: 'New Registrations', data: counts,
-        borderColor: '#27ae60', backgroundColor: 'rgba(39,174,96,0.1)',
-        fill: true, tension: 0.4 }]
-    },
-    options: { responsive: true, maintainAspectRatio: false }
-  });
-
-  const m = { Ushering: 0, Choir: 0, Instruments: 0, Venue: 0, Other: 0 };
-  data.forEach(r => {
-    const v = r.volunteering.toLowerCase();
-    if (v.includes('usher'))      m.Ushering++;
-    if (v.includes('choir'))      m.Choir++;
-    if (v.includes('instrument')) m.Instruments++;
-    if (v.includes('venue'))      m.Venue++;
-    if (v.includes('other'))      m.Other++;
-  });
-
-  if (ministryChart) ministryChart.destroy();
-  ministryChart = new Chart(document.getElementById('ministryChart').getContext('2d'), {
-    type: 'doughnut',
-    data: {
-      labels: Object.keys(m),
-      datasets: [{ data: Object.values(m),
-        backgroundColor: ['#3498db','#e74c3c','#f1c40f','#9b59b6','#95a5a6'] }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { title: { display: true, text: 'Ministry Interests' } }
-    }
-  });
-}
-
-/* ── View tabs (ministry filter) ─────────────────────── */
-viewTabs.addEventListener('click', e => {
-  const tab = e.target.closest('.view-tab');
-  if (!tab) return;
-  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-  tab.classList.add('active');
-  currentFilter = tab.dataset.filter;
-  renderTable(allRegistrations);
-});
-
-/* ── Search ──────────────────────────────────────────── */
-searchBar.addEventListener('input', () => renderTable(allRegistrations));
-
-/* ── Filtered slice (single source of truth) ─────────── */
-function getFiltered(data) {
-  let result = data;
-  
-  // Ministry filter
-  if (currentFilter !== 'all') {
-    result = result.filter(r =>
-      r.volunteering.toLowerCase().includes(currentFilter.toLowerCase())
-    );
-  }
-  
-  // Event type filter
-  const eventTypeFilter = document.getElementById('filterEventType')?.value;
-  if (eventTypeFilter) {
-    result = result.filter(r => r.registrationType === eventTypeFilter);
-  }
-  
-  // Status filter (attendance)
-  const statusFilter = document.getElementById('filterStatus')?.value;
-  if (statusFilter) {
-    result = result.filter(r => r.status === statusFilter);
-  }
-  
-  // Date filter
-  const dateFilter = document.getElementById('filterDate')?.value;
-  if (dateFilter) {
-    result = result.filter(r => {
-      if (!r.timestamp) return false;
-      const regDate = new Date(r.timestamp).toISOString().split('T')[0];
-      return regDate === dateFilter;
-    });
-  }
-  
-  // Search filter
-  const term = searchBar.value.toLowerCase();
-  if (term) {
-    result = result.filter(r =>
-      r.name.toLowerCase().includes(term)     ||
-      r.phone.toLowerCase().includes(term)    ||
-      r.location.toLowerCase().includes(term)
-    );
-  }
-  return result;
-}
-
-/* ── Render table ────────────────────────────────────── */
-function renderTable(data) {
-  const filtered = getFiltered(data);
-  totalCount.textContent = `Total: ${filtered.length}`;
-
-  if (!filtered.length) {
-    tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;">No records found.</td></tr>';
-    return;
-  }
-
-  tableBody.innerHTML = '';
-  filtered.forEach(r => {
-    const dateStr = r.timestamp ? new Date(r.timestamp).toLocaleDateString() : 'N/A';
-    const bday    = formatBirthday(r.birthMonth, r.birthDay);
-    const isUp    = isUpcomingBirthday(r.birthMonth, r.birthDay);
-    const volStr  = r.volunteering.length > 30 ? r.volunteering.substring(0, 30) + '…' : (r.volunteering || '—');
-
-    const tr = document.createElement('tr');
-    if (isUp) tr.classList.add('upcoming-birthday');
-
-    tr.innerHTML = `
-      <td>${dateStr}</td>
-      <td><strong>${r.name}</strong></td>
-      <td>${r.phone}</td>
-      <td>${r.location}</td>
-      <td>${bday}${isUp ? '<span class="birthday-tag">Soon!</span>' : ''}</td>
-      <td>${r.registrationType === 'general' ? '—' : r.registrationType}</td>
-      <td><span class="status-badge status-${r.status}">${r.status || 'pending'}</span></td>
-      <td>${r.firstTime === 'yes' ? '✓ Yes' : '—'}</td>
-      <td title="${r.volunteering}" style="font-size:0.85rem;">${volStr}</td>
-      <td>${r.referredBy}</td>
-      <td class="actions">
-        <div class="action-stack">
-          <div class="action-row">
-            ${r.whatsapp
-              ? `<a href="https://wa.me/${r.whatsapp.replace(/\D/g,'')}" target="_blank" class="whatsapp-link" title="Chat on WhatsApp">WA</a>`
-              : ''}
-            <button onclick="sendTemplate('${r.name}','${r.phone}','welcome')" class="btn-tpl btn-tpl--welcome">Welcome</button>
-            <button onclick="sendTemplate('${r.name}','${r.phone}','birthday')" class="btn-tpl btn-tpl--bday">Bday</button>
-          </div>
-          <div class="action-row">
-            ${r._source === 'firestore'
-              ? `<button onclick="toggleAttendance('${r.id}','${r.status}')" class="btn-attend" title="Toggle attendance">${r.status === 'attended' ? '✓ Attended' : 'Mark Present'}</button>
-               <button onclick="editMember('${r.id}')" class="btn-edit">Edit</button>
-               <button onclick="deleteMember('${r.id}')" class="btn-del">Del</button>`
-              : '<span class="sheet-only">Sheet-only</span>'}
-          </div>
-        </div>
-      </td>`;
-    tableBody.appendChild(tr);
-  });
-}
-
-/* ── WhatsApp message templates ──────────────────────── */
-window.sendTemplate = function(name, phone, type) {
-  if (!phone || phone === '—') { toast('No phone number available.', 'warn'); return; }
-  let clean = phone.replace(/\D/g, '');
-  if (clean.startsWith('0'))   clean = '256' + clean.substring(1);
-  else if (clean.length === 9) clean = '256' + clean;
-
-  const msg = type === 'welcome'
-    ? `Hello ${name}! It was a blessing to have you with us at Grace of Jesus Christ Ministries. We look forward to seeing you again. God bless you!`
-    : `Happy Birthday ${name}! Grace of Jesus Christ Ministries celebrates you today. May the Lord shower you with His blessings and favor in this new year!`;
-
-  window.open(`https://wa.me/${clean}?text=${encodeURIComponent(msg)}`, '_blank');
-};
-
-/* ── Edit member ─────────────────────────────────────── */
-window.editMember = function(id) {
-  const r = allRegistrations.find(r => r.id === id);
-  if (!r) return;
-  editingId = id;
-  document.getElementById('edit-name').value         = r.name;
-  document.getElementById('edit-phone').value        = r.phone;
-  document.getElementById('edit-residence').value    = r.location;
-  document.getElementById('edit-consent').value      = r.whatsapp;
-  document.getElementById('edit-bday').value         = r.birthDay;
-  document.getElementById('edit-bmonth').value       = r.birthMonth;
-  document.getElementById('edit-registered').value   = r.firstTime || 'no';
-  document.getElementById('edit-volunteering').value = r.volunteering;
-  document.getElementById('edit-referred').value     = r.referredBy === '—' ? '' : r.referredBy;
-  editModal.style.display = 'flex';
-};
-
-saveEditBtn.addEventListener('click', async () => {
-  if (!editingId || !db) return;
-  saveEditBtn.disabled    = true;
-  saveEditBtn.textContent = 'Saving…';
-  try {
-    await db.collection('registrations').doc(editingId).update({
-      name:         document.getElementById('edit-name').value.trim(),
-      phone:        document.getElementById('edit-phone').value.trim(),
-      location:     document.getElementById('edit-residence').value.trim(),
-      residence:    document.getElementById('edit-residence').value.trim(),
-      whatsapp:     document.getElementById('edit-consent').value.trim(),
-      birthDay:     document.getElementById('edit-bday').value,
-      birthMonth:   document.getElementById('edit-bmonth').value,
-      registered:   document.getElementById('edit-registered').value,
-      volunteering: document.getElementById('edit-volunteering').value.trim(),
-      referredBy:   document.getElementById('edit-referred').value.trim()
-    });
-    editModal.style.display = 'none';
-    editingId = null;
-    toast('Member updated successfully!');
-    fetchRegistrations();
-  } catch (err) {
-    toast('Error updating member: ' + err.message, 'error');
-  } finally {
-    saveEditBtn.disabled    = false;
-    saveEditBtn.textContent = 'Save Changes';
-  }
-});
-
-cancelEditBtn.addEventListener('click', () => {
-  editModal.style.display = 'none';
-  editingId = null;
-});
-
-/* ── Delete member ───────────────────────────────────── */
-window.deleteMember = async function(id) {
-  if (!db || !confirm('Delete this registration? This cannot be undone.')) return;
-  try {
-    await db.collection('registrations').doc(id).delete();
-    toast('Member deleted.');
-    fetchRegistrations();
-  } catch (err) {
-    toast('Error deleting member: ' + err.message, 'error');
-  }
-};
-
-/* ── Toggle Attendance ──────────────────────────────────── */
-window.toggleAttendance = async function(id, currentStatus) {
-  if (!db) return;
-  const newStatus = currentStatus === 'attended' ? 'not-attended' : 'attended';
-  try {
-    await db.collection('registrations').doc(id).update({
-      status: newStatus,
-      attendedDate: newStatus === 'attended' ? new Date().toISOString() : null
-    });
-    toast(newStatus === 'attended' ? 'Marked as attended!' : 'Marked as not attended');
-    fetchRegistrations();
-  } catch (err) {
-    toast('Error updating attendance: ' + err.message, 'error');
-  }
-};
-
-/* ── Export CSV ──────────────────────────────────────── */
-exportBtn.addEventListener('click', () => {
-  const filtered = getFiltered(allRegistrations);
-  if (!filtered.length) { toast('No data to export.', 'warn'); return; }
-
-  const headers = ['Date','Name','Phone','Residence','Birth Month','Birth Day','Registered?','WhatsApp','Volunteering','Referred By'];
-  const rows    = filtered.map(r => {
-    const dateStr = r.timestamp ? new Date(r.timestamp).toLocaleDateString() : 'N/A';
-    return [dateStr, r.name, r.phone, r.location, r.birthMonth, r.birthDay,
-            r.firstTime, r.whatsapp, r.volunteering, r.referredBy]
-      .map(v => `"${String(v ?? '').replace(/"/g, '""')}"`);
-  });
-
-  const csv  = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url  = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `Church_Registrations_${new Date().toLocaleDateString()}.csv`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-});
-
-/* ── Export PDF ───────────────────────────────────────── */
-const exportPdfBtn = document.getElementById('exportPdfBtn');
-if (exportPdfBtn) {
-  exportPdfBtn.addEventListener('click', () => {
-    const filtered = getFiltered(allRegistrations);
-    if (!filtered.length) { toast('No data to export.', 'warn'); return; }
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
-    // Title
-    doc.setFontSize(18);
-    doc.text('Church Registrations Report', 14, 22);
-    doc.setFontSize(10);
-    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30);
-    doc.text(`Total Records: ${filtered.length}`, 14, 36);
-
-    // Table data
-    const tableData = filtered.map(r => [
-      r.timestamp ? new Date(r.timestamp).toLocaleDateString() : 'N/A',
-      r.name,
-      r.phone,
-      r.location,
-      r.registrationType || 'general',
-      r.status || 'pending'
-    ]);
-
-    doc.autoTable({
-      startY: 42,
-      head: [['Date', 'Name', 'Phone', 'Location', 'Type', 'Status']],
-      body: tableData,
-      styles: { fontSize: 8 },
-      headStyles: { fillColor: [44, 62, 80] }
-    });
-
-    doc.save(`Church_Registrations_${new Date().toLocaleDateString()}.pdf`);
-    toast('PDF exported successfully!');
-  });
-}
-
-/* ── Media management ────────────────────────────────── */
-async function fetchMedia() {
-  if (!db) return;
-  try {
-    const snap = await db.collection('media').orderBy('timestamp', 'desc').get();
-    allMedia   = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    renderMedia(allMedia);
-  } catch (err) {
-    console.error('Error fetching media:', err);
-    mediaGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:red;">Error loading media library.</div>';
-  }
-}
-
-function renderMedia(data) {
-  const filter   = filterMediaCategory.value;
-  const filtered = filter === 'all' ? data : data.filter(m => m.category === filter);
-
-  if (!filtered.length) {
-    mediaGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:#777;">No images found in this category.</div>';
-    return;
-  }
-
-  mediaGrid.innerHTML = filtered.map(item => `
-    <div class="media-item">
-      <span class="category-badge">${item.category || 'General'}</span>
-      <img src="${item.url}" alt="Church photo" loading="lazy"
-           onclick="window.open('${item.url}', '_blank')">
-      <div class="media-item__name">${item.name}</div>
-      <div class="media-actions-inline">
-        <button class="btn-download" onclick="downloadImage('${item.url}','${item.name}')">Download</button>
-        <button class="btn-delete-media" onclick="deleteMedia('${item.id}','${item.storagePath}')">Delete</button>
-      </div>
-    </div>`).join('');
-}
-
-window.downloadImage = async function(url, name) {
-  try {
-    const res  = await fetch(url);
-    const blob = await res.blob();
-    const bUrl = URL.createObjectURL(blob);
-    const link = Object.assign(document.createElement('a'), { href: bUrl, download: name || 'image.jpg' });
-    document.body.appendChild(link); link.click(); document.body.removeChild(link);
-    URL.revokeObjectURL(bUrl);
-  } catch {
-    window.open(url, '_blank');
-  }
-};
-
-window.deleteMedia = async function(id, storagePath) {
-  if (!confirm('Delete this image? Download it first if you need it.')) return;
-  try {
-    if (storagePath) await storage.ref(storagePath).delete();
-    await db.collection('media').doc(id).delete();
-    fetchMedia();
-    toast('Image deleted.');
-  } catch (err) {
-    toast('Error deleting image: ' + err.message, 'error');
-  }
-};
-
-uploadBtn.addEventListener('click', async () => {
-  const files = fileInput.files;
-  if (!files.length) { toast('Please select images first.', 'warn'); return; }
-
-  const category = mediaCategoryInput.value;
-  uploadBtn.disabled           = true;
-  uploadProgressDiv.style.display = 'block';
-  uploadStatus.style.display   = 'block';
-  let ok = 0, fail = 0;
-
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    if (file.size > 5 * 1024 * 1024) {
-      toast(`Skipping ${file.name}: max 5 MB.`, 'warn');
-      fail++; continue;
-    }
-    const ts          = Date.now();
-    const safeName    = file.name.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
-    const storagePath = `media/${category}/${ts}_${safeName}`;
-    const ref         = storage.ref(storagePath);
-
-    try {
-      uploadStatus.textContent = `Uploading ${file.name} (${i + 1}/${files.length})…`;
-      const task = ref.put(file);
-      task.on('state_changed', snap => {
-        uploadProgressBar.style.width = ((snap.bytesTransferred / snap.totalBytes) * 100) + '%';
-      });
-      await task;
-      const url = await ref.getDownloadURL();
-      await db.collection('media').add({
-        name: file.name, url, storagePath, category,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      ok++;
-    } catch (err) {
-      console.error('Upload error:', err);
-      fail++;
-    }
-  }
-
-  uploadBtn.disabled              = false;
-  uploadProgressDiv.style.display = 'none';
-  uploadProgressBar.style.width   = '0%';
-  uploadStatus.style.display      = 'none';
-  fileInput.value                 = '';
-  document.getElementById('uploadText').textContent = 'Click to select photos';
-
-  if (ok > 0) { fetchMedia(); toast(`Uploaded ${ok} image(s).${fail ? ` (${fail} failed)` : ''}`); }
-  else if (fail > 0) toast('All uploads failed. Check console.', 'error');
-});
-
-filterMediaCategory.addEventListener('change', () => renderMedia(allMedia));
-
-fileInput.addEventListener('change', e => {
-  const count = e.target.files.length;
-  document.getElementById('uploadText').textContent =
-    count > 0 ? `${count} file(s) selected` : 'Click to select photos';
-});
-
-// Filter event listeners
-const filterEventType = document.getElementById('filterEventType');
-const filterStatus = document.getElementById('filterStatus');
-const filterDate = document.getElementById('filterDate');
-
-if (filterEventType) filterEventType.addEventListener('change', () => renderTable(allRegistrations));
-if (filterStatus) filterStatus.addEventListener('change', () => renderTable(allRegistrations));
-if (filterDate) filterDate.addEventListener('change', () => renderTable(allRegistrations));
+loadDashboard();

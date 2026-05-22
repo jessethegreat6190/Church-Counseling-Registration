@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Church Counseling Registration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2c3e50">
+  <link rel="apple-touch-icon" href="assets/logo/New%20Logo%202026.png">
+
+  <!-- Firebase SDK (Compat versions for ease of use) -->
+  <script defer src="/__/firebase/9.6.1/firebase-app-compat.js"></script>
+  <script defer src="/__/firebase/9.6.1/firebase-firestore-compat.js"></script>
+  <script defer src="/__/firebase/9.6.1/firebase-auth-compat.js"></script>
+  <script defer src="/__/firebase/9.6.1/firebase-storage-compat.js"></script>
+  <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+  <style>
+:root {
+       --primary-blue: #2c3e50;
+       --secondary-blue: #2980b9;
+       --white: #ffffff;
+       --light-gray: #f4f7f6;
+       --success-green: #27ae60;
+       --accent: #c97b1a;
+     }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--white) 100%);
+    }
+
+    .container {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 450px;
+      margin: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      padding: 2rem;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--primary-blue) 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    }
+
+    .header .admin-link {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.75rem;
+      text-decoration: none;
+      z-index: 10;
+      padding: 5px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .header .admin-link:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .admin-link-footer {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #777;
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: color 0.3s;
+    }
+
+    .admin-link-footer:hover {
+      color: var(--primary-blue);
+      text-decoration: underline;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.05) 35px, rgba(255,255,255,.05) 70px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      z-index: 2;
+    }
+
+    .header > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .header-text {
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .header-text::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      border-radius: 10px 10px 0 0;
+    }
+
+    .header-text::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      border-radius: 0 0 10px 10px;
+    }
+
+    .logo {
+      max-width: 100px;
+      height: auto;
+      margin-bottom: 0.5rem;
+      background: var(--primary-blue);
+      padding: 8px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: var(--white);
+      font-size: 1.4rem;
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .slogan {
+      color: var(--white);
+      font-size: 0.9rem;
+      margin-top: 5px;
+      font-weight: 500;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-weight: 600;
+      color: var(--primary-blue);
+      font-size: 0.85rem;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="radio"],
+    input[type="checkbox"],
+    input[type="select"],
+    select,
+    textarea {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    select {
+      width: 100%;
+      height: auto;
+      padding: 10px;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+      width: auto;
+      height: auto;
+      padding: 0;
+      margin: 0;
+    }
+
+    .birthday-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .birthday-group input {
+      width: 100%;
+    }
+
+    textarea {
+      height: 60px;
+      resize: vertical;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: row !important;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .checkbox-group input {
+      width: 18px;
+      height: 18px;
+    }
+
+    button {
+      background: var(--secondary-blue);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+button:hover {
+       background: var(--accent);
+       transform: translateY(-2px);
+     }
+
+    button:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+    }
+
+    #confirmation {
+      display: none;
+      animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .details-card {
+      background: var(--light-gray);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .details-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .details-card li {
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    /* Full-screen Blessing Overlay */
+    #fullBlessingOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--white) 100%);
+      z-index: 2000;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 1rem;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .blessing-content {
+      max-width: 500px;
+      width: 95%;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 3rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+      animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .blessing-logo {
+      max-width: 150px;
+      margin-bottom: 2rem;
+    }
+
+    .thank-you-note {
+      color: var(--success-green);
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .blessing-text {
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--primary-blue);
+      line-height: 1.6;
+      margin: 2rem 0;
+      padding: 0 1rem;
+    }
+
+    .slogan-footer {
+      color: var(--secondary-blue);
+      font-weight: 600;
+      margin-top: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .done-btn {
+      margin-top: 3rem;
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      background: var(--success-green);
+    }
+
+    .done-btn:hover {
+      background: #219a52;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(39,174,96,0.3);
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 1.5rem; }
+      h1 { font-size: 1.25rem; }
+      .thank-you-note { font-size: 1.5rem; }
+      .blessing-text { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <a href="dashboard.html" class="admin-link">Admin Access</a>
+      <img src="assets/logo/New%20Logo%202026.png" alt="Church Logo" class="logo">
+      <div class="header-text">
+        <h1>Grace of Jesus Christ Ministries</h1>
+        <div class="slogan">An encounter with the Holy Spirit</div>
+      </div>
+    </div>
+
+    <form id="registrationForm">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="Enter your name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" placeholder="e.g. 0700000000" required>
+      </div>
+
+      <div class="form-group">
+        <label for="location">Residence</label>
+        <input type="text" id="location" placeholder="Where do you live?" required>
+      </div>
+
+      <div class="form-group">
+        <label>Registered?</label>
+        <div class="checkbox-group" style="gap: 20px;">
+          <label style="cursor: pointer;">
+            <input type="radio" name="firstTime" value="yes"> First time registering online
+          </label>
+          <label style="cursor: pointer;">
+            <input type="radio" name="firstTime" value="no" checked> I have registered before
+          </label>
+        </div>
+      </div>
+
+      <div id="firstTimeFields" style="display: none;">
+        <div class="form-group">
+          <label>Your Birthday (Optional)</label>
+          <div class="birthday-group">
+            <input type="number" id="birthDay" placeholder="Day (e.g. 24)" min="1" max="31">
+            <select id="birthMonth">
+              <option value="">Month</option>
+              <option value="1">January</option>
+              <option value="2">February</option>
+              <option value="3">March</option>
+              <option value="4">April</option>
+              <option value="5">May</option>
+              <option value="6">June</option>
+              <option value="7">July</option>
+              <option value="8">August</option>
+              <option value="9">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" id="volunteerSection">
+          <label>How can you serve? (Optional)</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8f9fa; padding: 10px; border-radius: 6px;">
+            <label style="cursor: pointer; display: flex; gap: 8px;">
+              <input type="checkbox" id="vol-ushering" value="Ushering"> Ushering
+            </label>
+            <label style="cursor: pointer; display: flex; gap: 8px;">
+              <input type="checkbox" id="vol-choir" value="Choir"> Choir
+            </label>
+            <label style="cursor: pointer; display: flex; gap: 8px; grid-column: span 2;">
+              <input type="checkbox" id="vol-instruments" value="Playing musical instruments"> Playing musical instruments:
+              <input type="text" id="instrument-type" placeholder="Which instrument?" style="padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px; flex: 1;">
+            </label>
+            <label style="cursor: pointer; display: flex; gap: 8px; grid-column: span 2;">
+              <input type="checkbox" id="vol-venue" value="Venue Management"> Venue Management
+            </label>
+            <label style="cursor: pointer; display: flex; gap: 8px;">
+              <input type="checkbox" id="vol-other" value="Other"> Other
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group checkbox-group" id="consentGroup">
+          <input type="checkbox" id="consent" checked>
+          <label for="consent" style="cursor: pointer;">Would you like to be added to the WhatsApp group?</label>
+        </div>
+
+        <div class="form-group" style="margin-top:8px;">
+          <label for="referredBy">How did you hear about us? (Optional)</label>
+          <input type="text" id="referredBy" placeholder="Friend, social media, flyer..." style="padding:8px; margin-top:6px; border:1px solid #ddd; border-radius:6px; width:100%;">
+        </div>
+      </div>
+
+      <button type="submit" id="submitBtn">Done Registering</button>
+    </form>
+
+    <div id="confirmation">
+      <div style="text-align: center;">
+        <h2 style="color: var(--primary-blue); margin-top: 0;">Confirm Your Details</h2>
+        <p>Ensure your information is correct before saving.</p>
+      </div>
+      <div class="details-card">
+        <ul id="detailsList"></ul>
+      </div>
+      <button id="saveBtn" style="width: 100%; background: var(--success-green); margin-bottom: 10px;">Save Registration</button>
+      <button id="editBtn" style="width: 100%; background: var(--primary-blue);">Edit Details</button>
+    </div>
+    
+    <a href="dashboard.html" class="admin-link-footer">Admin Login</a>
+  </div>
+
+  <div id="fullBlessingOverlay">
+    <div class="blessing-content">
+      <img src="assets/logo/New%20Logo%202026.png" alt="Church Logo" class="blessing-logo">
+      <div class="thank-you-note">Thank You for Registering!</div>
+      <p id="blessingText" class="blessing-text"></p>
+      <div class="slogan-footer">An encounter with the Holy Spirit</div>
+      <button class="done-btn" onclick="closeBlessing()">Amen</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { 
+      formatName, 
+      isUpcomingBirthday, 
+      formatBirthday, 
+      getWeeklyVerse, 
+      WEEKLY_VERSES, 
+      DEFAULT_CHURCH_PROGRAMS 
+    } from './js/utils.js';
+
+    const REGISTER_API_URL = 'https://script.google.com/macros/s/AKfycbxep7hhQKPfuPBG9q9oig8D892E2d4bdBdPvGct48jlAFIUP6bmSu06tIbbl-6pmISsOQ/exec';
+    const GET_DATA_API_URL = 'https://script.google.com/macros/s/AKfycbxep7hhQKPfuPBG9q9oig8D892E2d4bdBdPvGct48jlAFIUP6bmSu06tIbbl-6pmISsOQ/exec';
+    
+    const form = document.getElementById('registrationForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const confirmation = document.getElementById('confirmation');
+    const detailsList = document.getElementById('detailsList');
+    const saveBtn = document.getElementById('saveBtn');
+    const editBtn = document.getElementById('editBtn');
+    const fullBlessingOverlay = document.getElementById('fullBlessingOverlay');
+    
+    let currentEntry = null;
+    let allRegistrations = [];
+    let db = null;
+    
+    // Initialize Firestore after script load
+    window.addEventListener('load', () => {
+      if (typeof firebase !== 'undefined') {
+        db = firebase.firestore();
+        console.log("Firestore Initialized");
+      }
+    });
+
+    let churchPrograms = { ...DEFAULT_CHURCH_PROGRAMS };
+
+    // Pre-fetch registrations & programs
+    async function prefetchData() {
+      try {
+        // First try Firestore (More reliable)
+        if (typeof firebase !== 'undefined' && db) {
+          const snapshot = await db.collection('registrations').get();
+          allRegistrations = snapshot.docs.map(doc => doc.data());
+          console.log("Fetched from Firestore");
+          
+          // Fetch programs from special doc
+          const progDoc = await db.collection('settings').doc('programs').get();
+          if (progDoc.exists) {
+            churchPrograms = progDoc.data();
+          }
+        }
+
+        // Secondary fallback: Google Sheets
+        const response = await fetch(GET_DATA_API_URL);
+        if (response.ok) {
+          const data = await response.json();
+          // Merge with allRegistrations (avoiding duplicates by phone)
+          data.forEach(reg => {
+            if (reg.name !== "SYSTEM_PROGRAMS") {
+              const phone = String(reg.phone || "").replace(/\D/g, '').slice(-9);
+              if (!allRegistrations.some(r => String(r.phone || "").replace(/\D/g, '').slice(-9) === phone)) {
+                allRegistrations.push(reg);
+              }
+            } else if (!churchPrograms.custom) { // only if firestore was empty
+               try {
+                 churchPrograms = JSON.parse(reg.location);
+               } catch(e){}
+            }
+          });
+        }
+      } catch (e) {
+        console.error("Could not fetch existing data", e);
+      }
+    }
+    
+    // Wait for Firestore to be ready before pre-fetching
+    window.addEventListener('load', () => {
+       setTimeout(prefetchData, 1000);
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('SW registered'))
+          .catch(err => console.log('SW registration failed', err));
+      });
+    }
+
+    function handleReview(e) {
+      e.preventDefault();
+      
+      const rawName = document.getElementById('name').value.trim();
+      const formattedName = formatName(rawName);
+
+      const firstTimeValue = document.querySelector('input[name="firstTime"]:checked')?.value || "no";
+
+      // Get volunteer interests
+      const volunteering = [];
+      const volCheckboxes = document.querySelectorAll('#volunteerSection input[type="checkbox"]:checked');
+      volCheckboxes.forEach(cb => {
+        if (cb.value === "Playing musical instruments") {
+          const instrument = document.getElementById('instrument-type').value.trim();
+          volunteering.push(`Instruments: ${instrument || "General"}`);
+        } else if (cb.value) {
+          volunteering.push(cb.value);
+        }
+      });
+
+      currentEntry = {
+        name: formattedName,
+        phone: document.getElementById('phone').value.trim(),
+        location: document.getElementById('location').value.trim(),
+        firstTime: firstTimeValue,
+        birthDay: document.getElementById('birthDay')?.value || "",
+        birthMonth: document.getElementById('birthMonth')?.value || "",
+        referredBy: document.getElementById('referredBy')?.value.trim() || null,
+        volunteering: volunteering,
+        consent: document.getElementById('consent').checked
+      };
+
+      showConfirmation(currentEntry);
+    }
+
+    form.addEventListener('submit', handleReview);
+    editBtn.addEventListener('click', () => {
+      form.style.display = "flex";
+      confirmation.style.display = "none";
+    });
+
+    // firstTime radio behaviour: show volunteer section and birthday only for first-time visitors.
+    function updateFirstTimeUI(value) {
+      const firstTimeFields = document.getElementById('firstTimeFields');
+
+      if (value === 'yes') {
+        firstTimeFields.style.display = 'block';
+      } else {
+        // For returning visitors show only name, phone and location (residence)
+        firstTimeFields.style.display = 'none';
+        
+        // Clear hidden fields
+        document.querySelectorAll('#firstTimeFields input[type="checkbox"]').forEach(cb => cb.checked = false);
+        const instr = document.getElementById('instrument-type');
+        const ref = document.getElementById('referredBy');
+        const bDay = document.getElementById('birthDay');
+        const bMonth = document.getElementById('birthMonth');
+        if (instr) instr.value = '';
+        if (ref) ref.value = '';
+        if (bDay) bDay.value = '';
+        if (bMonth) bMonth.value = '';
+      }
+    }
+
+    document.querySelectorAll('input[name="firstTime"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        updateFirstTimeUI(e.target.value);
+      });
+    });
+
+    // Initialize UI based on default selection
+    const initialFirst = document.querySelector('input[name="firstTime"]:checked')?.value || 'no';
+    updateFirstTimeUI(initialFirst);
+
+    function showBlessing(verse) {
+      document.getElementById('blessingText').textContent = verse;
+      fullBlessingOverlay.style.display = 'flex';
+    }
+
+    function closeBlessing() {
+      fullBlessingOverlay.style.display = 'none';
+      resetForm();
+    }
+    // Expose closeBlessing to window for onclick handler
+    window.closeBlessing = closeBlessing;
+
+    async function handleSave() {
+      if (!currentEntry) return;
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = "Saving...";
+
+      const blessing = getWeeklyVerse(WEEKLY_VERSES);
+      
+      // 1. Prepare data for Google Sheets
+      const formData = {
+        name: currentEntry.name,
+        phone: currentEntry.phone,
+        location: currentEntry.location,
+        birthMonth: currentEntry.birthMonth || "",
+        birthDay: currentEntry.birthDay || "",
+        registered: currentEntry.firstTime,
+        whatsapp: currentEntry.consent ? currentEntry.phone : "—",
+        volunteering: currentEntry.volunteering.join(", "),
+        referredBy: currentEntry.referredBy || ""
+      };
+
+      // 2. Determine if returning user (Check if phone already exists)
+      const cleanInputPhone = (currentEntry.phone || "").replace(/\D/g, '').slice(-9);
+      let isReturning = false;
+      
+      try {
+        if (db) {
+          // Optimized check: 
+          // 1. Check if a document with this clean phone ID already exists
+          const docRef = db.collection('registrations').doc(cleanInputPhone);
+          const docSnap = await docRef.get();
+          
+          if (docSnap.exists) {
+            isReturning = true;
+          } else {
+            // 2. Fallback: Search for existing phone number in other fields (for older records)
+            const snapshot = await db.collection('registrations')
+              .where('phone', '==', currentEntry.phone)
+              .get();
+            
+            if (!snapshot.empty) {
+              isReturning = true;
+            } else {
+              // 3. Last fallback: Check locally prefetched data
+              isReturning = allRegistrations.some(reg => {
+                const dbPhone = String(reg.phone || "").replace(/\D/g, '').slice(-9);
+                return cleanInputPhone && dbPhone === cleanInputPhone;
+              });
+            }
+          }
+        } else if (Array.isArray(allRegistrations)) {
+          isReturning = allRegistrations.some(reg => {
+            const dbPhone = String(reg.phone || "").replace(/\D/g, '').slice(-9);
+            return cleanInputPhone && dbPhone === cleanInputPhone;
+          });
+        }
+      } catch (e) {
+        console.warn("Direct DB check failed, falling back to local list", e);
+        if (Array.isArray(allRegistrations)) {
+          isReturning = allRegistrations.some(reg => {
+            const dbPhone = String(reg.phone || "").replace(/\D/g, '').slice(-9);
+            return cleanInputPhone && dbPhone === cleanInputPhone;
+          });
+        }
+      }
+
+      // 3. Save to database using a hidden form (The most reliable method)
+      try {
+        if (isReturning) {
+          console.log("User already registered, skipping save.");
+        } else {
+          // A. FIREBASE SAVE (Direct and reliable)
+          if (db) {
+            // Using cleanInputPhone as document ID to naturally prevent duplicates
+            await db.collection('registrations').doc(cleanInputPhone).set({
+              ...formData,
+              cleanPhone: cleanInputPhone,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log("Saved to Firestore with ID:", cleanInputPhone);
+          }
+
+          // B. GOOGLE SHEETS SAVE (Backup)
+          const formId = 'temp_gas_form';
+          let tempForm = document.getElementById(formId);
+          if (!tempForm) {
+            tempForm = document.createElement('form');
+            tempForm.id = formId;
+            tempForm.style.display = 'none';
+            tempForm.method = 'POST';
+            tempForm.action = REGISTER_API_URL;
+            tempForm.target = 'hidden_iframe';
+            
+            if (!document.getElementById('hidden_iframe')) {
+              const iframe = document.createElement('iframe');
+              iframe.id = 'hidden_iframe';
+              iframe.name = 'hidden_iframe';
+              iframe.style.display = 'none';
+              document.body.appendChild(iframe);
+            }
+            document.body.appendChild(tempForm);
+          }
+
+          tempForm.innerHTML = '';
+          for (const key in formData) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = formData[key];
+            tempForm.appendChild(input);
+          }
+
+          tempForm.submit();
+        }
+
+        // 4. Prepare WhatsApp URL if needed
+        let whatsappUrl = null;
+        if (!isReturning) {
+          let rawNumber = currentEntry.phone.replace(/\D/g, '');
+          if (rawNumber.startsWith('0')) {
+            rawNumber = '256' + rawNumber.substring(1);
+          } else if (rawNumber.length === 9 && (rawNumber.startsWith('7') || rawNumber.startsWith('3'))) {
+            rawNumber = '256' + rawNumber;
+          }
+
+          let programMessage = 
+            "Church Programs:\n" +
+            "• Sunday Services: " + churchPrograms.sunday + "\n" +
+            "• Monday Kyoto Prayers: " + churchPrograms.monday + "\n" +
+            "• Wednesday Evening Glory: " + churchPrograms.wednesday + "\n" +
+            "• Tue & Thu Counseling: " + churchPrograms.tueThu + "\n" +
+            "• Friday Night Prayers: " + churchPrograms.friday;
+          
+          if (churchPrograms.custom && churchPrograms.custom.trim()) {
+            programMessage += "\n• " + churchPrograms.custom;
+          }
+
+          let messageText = "Hello " + currentEntry.name + "! Thank you for registering at Grace of Jesus Christ Ministries.\n\n" +
+            "🕊 *A Blessing for you:* \"" + blessing + "\"\n\n" +
+            programMessage;
+
+          if (currentEntry.consent) {
+            messageText += "\n\nJoin our WhatsApp Group: https://chat.whatsapp.com/Bd2AT6h45KgKMTUwCod89h";
+          }
+
+          messageText += "\n\nSubscribe to our YouTube: https://www.youtube.com/@encounter_GJM\n\n" +
+            "*An encounter with the Holy Spirit*";
+
+          const message = encodeURIComponent(messageText);
+          whatsappUrl = `https://wa.me/${rawNumber}?text=${message}`;
+        }
+
+        // 5. Show blessing and open WhatsApp
+        setTimeout(() => {
+          const thankYouNote = document.querySelector('.thank-you-note');
+          const blessingPara = document.getElementById('blessingText');
+
+          if (isReturning) {
+            if (thankYouNote) thankYouNote.textContent = "Welcome Back!";
+            blessingPara.textContent = `You are already registered! "${blessing}"`;
+          } else {
+            if (thankYouNote) thankYouNote.textContent = "Thank You for Registering!";
+            if (whatsappUrl) {
+              window.open(whatsappUrl, "_blank");
+              blessingPara.innerHTML = `"${blessing}"<br><br><a href="${whatsappUrl}" target="_blank" style="color:#25D366; font-size:1rem; font-weight:bold; text-decoration:none;">Click here to join WhatsApp if it didn't open!</a>`;
+            } else {
+              blessingPara.textContent = `"${blessing}"`;
+            }
+          }
+          showBlessing(blessing);
+        }, 800);
+
+      } catch (error) {
+        console.error("Save error:", error);
+        alert("❌ Error saving registration. Please try again.");
+        saveBtn.disabled = false;
+        saveBtn.textContent = "Save Registration";
+      }
+    }
+
+    saveBtn.addEventListener('click', handleSave);
+
+    function showConfirmation(data) {
+      const container = document.querySelector('.container');
+      container.style.opacity = '0';
+      container.style.transform = 'scale(0.98)';
+
+      setTimeout(() => {
+        if (data.firstTime === 'no') {
+          detailsList.innerHTML = `
+            <li><strong>Name:</strong> ${data.name}</li>
+            <li><strong>Phone:</strong> ${data.phone}</li>
+            <li><strong>Residence:</strong> ${data.location}</li>
+            <li><strong>Registration:</strong> Returning</li>
+          `;
+        } else {
+          const volStr = data.volunteering.length > 0 ? data.volunteering.join(", ") : "Not interested";
+          const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+          const birthdayStr = (data.birthDay && data.birthMonth) ? `${data.birthDay} ${monthNames[data.birthMonth]}` : "—";
+
+          detailsList.innerHTML = `
+            <li><strong>Name:</strong> ${data.name}</li>
+            <li><strong>Phone:</strong> ${data.phone}</li>
+            <li><strong>Residence:</strong> ${data.location}</li>
+            <li><strong>Birthday:</strong> ${birthdayStr}</li>
+            <li><strong>Registration:</strong> First-time online</li>
+            <li><strong>Volunteer Interests:</strong> ${volStr}</li>
+            <li><strong>WhatsApp Group Invite:</strong> ${data.consent ? "Yes" : "No"}</li>
+          `;
+        }
+        form.style.display = "flex";
+        confirmation.style.display = "block";
+        container.style.opacity = '1';
+        container.style.transform = 'scale(1)';
+      }, 300);
+    }
+
+    function resetForm() {
+      form.reset();
+      currentEntry = null;
+      form.style.display = "flex";
+      confirmation.style.display = "none";
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Save Registration";
+      prefetchData();
+    }
+  </script>
+</body>
+</html>

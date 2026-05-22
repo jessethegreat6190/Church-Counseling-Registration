@@ -9,8 +9,8 @@
       "netlify/**",
       ".github/**",
       "*.code-workspace",
-      "church logo/Banner.png",
-      "church logo/video.mp4"
+      "assets/logo/Banner.png",
+      "assets/logo/video.mp4"
     ]
   },
   "firestore": {

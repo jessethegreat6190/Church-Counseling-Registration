@@ -94,10 +94,19 @@ export const getWeeklyVerse = (verses = WEEKLY_VERSES) => {
 };
 
 export const DEFAULT_CHURCH_PROGRAMS = {
-  sunday: "8:00 AM",
-  monday: "7:00 AM - 9:00 AM",
-  wednesday: "Evening Glory 5pm-7pm",
-  tueThu: "7:00 AM - 3:00 PM",
-  friday: "3pm, 2am, 3am (Not overnight)",
-  whatsappLink: "https://chat.whatsapp.com/Bd2AT6h45KgKMTUwCod89h"
+   sunday: "8:00 AM",
+   monday: "7:00 AM - 9:00 AM",
+   wednesday: "Evening Glory 5pm-7pm",
+   tueThu: "7:00 AM - 3:00 PM",
+   friday: "3pm, 2am, 3am (Not overnight)",
+   whatsappLink: "https://chat.whatsapp.com/Bd2AT6h45KgKMTUwCod89h"
 };
+
+export const DEFAULT_UPCOMING_PROGRAMS = [
+   { title: "Sunday Service", date: "Every Sunday", time: "8:00 AM", description: "Join us for powerful worship and life-changing teaching.", icon: "fa-church" },
+   { title: "Monday Kyoto Prayers", date: "Every Monday", time: "7:00 AM – 9:00 AM", description: "Start your week with focused prayer and spiritual renewal.", icon: "fa-hands-praying" },
+   { title: "Wednesday Kyoto & Evening Glory", date: "Every Wednesday", time: "7:00 AM – 9:00 AM / 6:00 PM – 7:00 PM", description: "Morning Kyoto prayers followed by Evening Glory worship.", icon: "fa-sun" },
+   { title: "Tue & Thu Counseling", date: "Every Tuesday & Thursday", time: "7:00 AM – 3:00 PM", description: "Personal and family counseling sessions by appointment.", icon: "fa-heart" },
+   { title: "Friday Night Prayers", date: "Every Friday", time: "9:00 PM – 2:00 AM", description: "Intense prayer session — not overnight, pray and go home.", icon: "fa-moon" },
+   { title: "Youth Fellowship", date: "Alternate Saturdays", time: "4:00 PM – 6:00 PM", description: "A gathering for young people to grow in faith and fellowship.", icon: "fa-users" }
+];

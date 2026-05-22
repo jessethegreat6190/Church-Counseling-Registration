@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project Synopsis - Church Registration System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    @page {
+      size: A4;
+      margin: 1.5cm;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 11pt;
+      line-height: 1.5;
+      color: #1a1a1a;
+      max-width: 21cm;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      border-bottom: 4px solid #2c3e50;
+      padding-bottom: 25px;
+      margin-bottom: 30px;
+    }
+    .header img.logo-main {
+      width: 100px;
+      height: auto;
+      margin-bottom: 15px;
+    }
+    .header h1 {
+      font-size: 26pt;
+      color: #2c3e50;
+      margin-bottom: 8px;
+    }
+    .header h2 {
+      font-size: 16pt;
+      color: #555;
+      font-weight: normal;
+    }
+    .section {
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+    }
+    .section h3 {
+      font-size: 13pt;
+      color: #2c3e50;
+      border-left: 5px solid #2c3e50;
+      padding-left: 12px;
+      margin-bottom: 12px;
+    }
+    .section p {
+      margin-bottom: 10px;
+      text-align: justify;
+      text-indent: 0;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .feature-item {
+      background: #f8f9fa;
+      padding: 10px 15px;
+      border-radius: 4px;
+      border-left: 3px solid #27ae60;
+    }
+    .feature-item strong {
+      color: #2c3e50;
+    }
+    .tech-stack {
+      background: #f0f4f8;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 12px 0;
+    }
+    .tech-stack ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .tech-stack li {
+      padding: 5px 10px;
+      background: white;
+      border-radius: 3px;
+    }
+    .tech-stack li::before {
+      content: "✓ ";
+      color: #27ae60;
+      font-weight: bold;
+    }
+    .data-fields {
+      margin: 12px 0;
+    }
+    .data-fields table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10pt;
+    }
+    .data-fields th, .data-fields td {
+      border: 1px solid #ddd;
+      padding: 6px 10px;
+      text-align: left;
+    }
+    .data-fields th {
+      background: #2c3e50;
+      color: white;
+    }
+    .data-fields tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 2px solid #ddd;
+      text-align: center;
+      font-size: 10pt;
+      color: #666;
+    }
+    .project-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    .info-item label {
+      font-weight: bold;
+      color: #2c3e50;
+      font-size: 10pt;
+    }
+    .info-item p {
+      margin: 0;
+      font-size: 10pt;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+    }
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+    }
+    .comparison-table th, .comparison-table td {
+      border: 1px solid #ddd;
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 10pt;
+    }
+    .comparison-table th {
+      background: #2c3e50;
+      color: white;
+    }
+    .comparison-table tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+    .comparison-table .old {
+      background: #ffebee;
+    }
+    .comparison-table .new {
+      background: #e8f5e9;
+    }
+    .req-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+    }
+    .req-table th, .req-table td {
+      border: 1px solid #ddd;
+      padding: 6px 10px;
+      text-align: left;
+      font-size: 10pt;
+    }
+    .req-table th {
+      background: #2c3e50;
+      color: white;
+    }
+    .req-table td:first-child {
+      font-weight: bold;
+      width: 35%;
+    }
+    ul.references {
+      list-style: none;
+      padding-left: 0;
+      font-size: 10pt;
+    }
+    ul.references li {
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+    }
+    ul.references li::before {
+      content: "[" attr(data-num) "] ";
+      color: #2c3e50;
+      font-weight: bold;
+    }
+    .figure {
+      margin: 15px 0;
+      text-align: center;
+    }
+    .figure img {
+      max-width: 80%;
+      height: auto;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .figure-caption {
+      font-size: 10pt;
+      color: #666;
+      margin-top: 8px;
+      font-style: italic;
+    }
+    .page-break {
+      page-break-after: always;
+    }
+    .objectives-list {
+      margin-left: 20px;
+    }
+    .objectives-list li {
+      margin-bottom: 8px;
+    }
+    .methodology {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 12px 0;
+    }
+    .methodology h4 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+    .methodology ol {
+      margin-left: 20px;
+    }
+    .methodology li {
+      margin-bottom: 5px;
+    }
+    .highlight-box {
+      background: #e3f2fd;
+      border-left: 4px solid #1976d2;
+      padding: 12px 15px;
+      margin: 12px 0;
+      border-radius: 0 5px 5px 0;
+    }
+    .diagrams {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 15px 0;
+    }
+    .diagram-box {
+      border: 2px solid #2c3e50;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+    .diagram-box h4 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-size: 11pt;
+    }
+    .diagram-box p {
+      font-size: 10pt;
+      color: #555;
+    }
+    .flow-step {
+      background: #f0f4f8;
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 4px;
+      font-size: 10pt;
+    }
+    .flow-step::before {
+      content: "→ ";
+      color: #27ae60;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <img src="../assets/logo/New Logo 2026.png" alt="Grace of Jesus Christ Ministries Logo" class="logo-main">
+    <h1>Church Registration System</h1>
+    <h2>Project Synopsis</h2>
+  </div>
+
+  <div class="project-info">
+    <div class="info-item">
+      <label>Organization:</label>
+      <p>Grace of Jesus Christ Ministries – Kitintale</p>
+    </div>
+    <div class="info-item">
+      <label>Location:</label>
+      <p>Kitintale, Kampala, Uganda</p>
+    </div>
+    <div class="info-item">
+      <label>Project Type:</label>
+      <p>Web Application (PWA)</p>
+    </div>
+    <div class="info-item">
+      <label>Version:</label>
+      <p>1.0.0</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>1. Introduction</h3>
+    <p>
+      Grace of Jesus Christ Ministries, located in Kitintale, Kampala, Uganda, has experienced 
+      steady growth in membership over the years. With this growth comes the need for more 
+      efficient and organized methods of managing member information. The church currently 
+      relies on manual, paper-based registration processes which are prone to errors, loss of 
+      data, and difficulty in data retrieval and analysis.
+    </p>
+    <p>
+      The church, with its slogan "An encounter with the Holy Spirit," holds Sunday services 
+      at 8:00 AM and has become a beacon of spiritual growth in the Kitintale community. As 
+      the congregation continues to expand, the administrative challenges of managing member 
+      data have become increasingly complex. Manual registration books, while functional in 
+      the past, no longer meet the needs of a modern, growing church community.
+    </p>
+    <p>
+      This project aims to develop a comprehensive church registration system that digitizes 
+      the entire registration process. The proposed system will not only capture member 
+      information but also facilitate better communication, enable serving opportunity 
+      tracking, and provide church leadership with valuable insights through analytics and 
+      reporting capabilities. The system is designed to be user-friendly, accessible on 
+      multiple devices including smartphones, and provides a seamless experience for both 
+      church members registering and administrators managing the data.
+    </p>
+  </div>
+
+  <div class="section">
+    <h3>2. Abstract</h3>
+    <p>
+      This project presents a web-based Church Registration System developed for Grace of 
+      Jesus Christ Ministries – Kitintale. The system addresses the limitations of the current 
+      manual paper-based registration method by providing a modern, efficient, and reliable 
+      digital solution. The proposed system consists of two main components: a public-facing 
+      registration portal accessible via web browsers, and an administrative dashboard for 
+      church leadership to manage and analyze member data.
+    </p>
+    <p>
+      The registration portal implements a multi-step form that collects essential member 
+      information including full name, phone number, residence, birthday, serving preferences, 
+      and referral source. The system also includes features for tracking serving opportunities 
+      such as ushering, choir, playing musical instruments, and venue management. Optional 
+      features include birthday celebration tracking and WhatsApp group membership consent.
+    </p>
+    <p>
+      The administrative dashboard provides secure authentication for authorized personnel, 
+      real-time access to registration data stored in Firebase Firestore, statistical 
+      visualizations using Chart.js, and data export capabilities. The entire application 
+      is built as a Progressive Web App (PWA), allowing users to install it on their devices 
+      and access it offline when necessary. This system represents a significant improvement 
+      over traditional paper-based methods, offering better data security, accessibility, 
+      and operational efficiency.
+    </p>
+  </div>
+
+  <div class="section">
+    <h3>3. Problem Statement</h3>
+    <p>
+      The current registration system at Grace of Jesus Christ Ministries faces numerous 
+      challenges that hinder effective church management and member engagement. The following 
+      problems have been identified through observation and consultation with church leadership:
+    </p>
+    <div class="highlight-box">
+      <strong>Key Problems Identified:</strong>
+      <ul style="margin-top: 10px; margin-left: 20px;">
+        <li>Inability to efficiently search and retrieve member information</li>
+        <li>No mechanism for tracking and analyzing church growth</li>
+        <li>Difficulty in maintaining accurate records of serving ministries</li>
+        <li>Limited communication channels with church members</li>
+        <li>No backup system for important member data</li>
+        <li>Time-consuming manual data entry and processing</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>4. Objectives of the Project</h3>
+    <p>
+      The primary objective of this project is to develop and implement a comprehensive 
+      church registration system that addresses the limitations of the current manual 
+      process. The specific objectives include:
+    </p>
+    <ul class="objectives-list">
+      <li><strong>To digitize the member registration process:</strong> Replace paper-based 
+          registration with an efficient online system accessible 24/7</li>
+      <li><strong>To improve data accessibility:</strong> Enable authorized personnel to 
+          search, filter, and retrieve member information instantly</li>
+      <li><strong>To enable serving opportunity tracking:</strong> Identify members interested 
+          in various ministry roles and track their involvement</li>
+      <li><strong>To provide analytics and reporting:</strong> Generate visual reports and 
+          statistics on church growth and member demographics</li>
+      <li><strong>To enhance communication:</strong> Facilitate better member engagement through 
+          WhatsApp group integration and consent management</li>
+      <li><strong>To ensure data security and backup:</strong> Implement cloud-based storage 
+          with automatic backup and redundancy</li>
+      <li><strong>To improve user experience:</strong> Create a mobile-friendly, intuitive 
+          interface for all users</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3>5. Scope of the Project</h3>
+    <p>
+      The project scope encompasses the development of a complete church registration system 
+      with the following components:
+    </p>
+    <div class="features">
+      <div class="feature-item">
+        <strong>Registration Portal</strong><br>
+        Public-facing web interface for member/visitor registration
+      </div>
+      <div class="feature-item">
+        <strong>Admin Dashboard</strong><br>
+        Secure backend for managing and viewing registrations
+      </div>
+      <div class="feature-item">
+        <strong>Database System</strong><br>
+        Cloud-based NoSQL database for secure data storage
+      </div>
+      <div class="feature-item">
+        <strong>Authentication</strong><br>
+        Secure admin login with role-based access control
+      </div>
+      <div class="feature-item">
+        <strong>Analytics Module</strong><br>
+        Statistical charts and data visualization
+      </div>
+      <div class="feature-item">
+        <strong>PWA Features</strong><br>
+        Installable app with offline capabilities
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>6. Existing System Analysis</h3>
+    <p>
+      The current registration system at Grace of Jesus Christ Ministries relies entirely on 
+      paper-based methods and manual record-keeping. New visitors and members register by 
+      writing their information in physical registration books during church services. This 
+      approach, while simple, presents several significant challenges:
+    </p>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>Current Paper-Based System</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="old">
+          <td><strong>Data Storage</strong></td>
+          <td>Physical registration books that can be damaged, lost, or destroyed</td>
+        </tr>
+        <tr class="old">
+          <td><strong>Data Retrieval</strong></td>
+          <td>Time-consuming manual search through pages of handwritten entries</td>
+        </tr>
+        <tr class="old">
+          <td><strong>Data Analysis</strong></td>
+          <td>Impossible to generate reports or analyze member demographics</td>
+        </tr>
+        <tr class="old">
+          <td><strong>Data Accuracy</strong></td>
+          <td>Prone to legibility errors, incomplete information, and duplications</td>
+        </tr>
+        <tr class="old">
+          <td><strong>Accessibility</strong></td>
+          <td>Data is only available at the physical church location</td>
+        </tr>
+        <tr class="old">
+          <td><strong>Backup</strong></td>
+          <td>No automated backup system; vulnerable to physical damage</td>
+        </tr>
+        <tr class="old">
+          <td><strong>Search Capability</strong></td>
+          <td>No electronic search or filtering capabilities</td>
+        </tr>
+        <tr class="old">
+          <td><strong>Serving Tracking</strong></td>
+          <td>Manual tracking of member service preferences</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Additionally, the paper-based system makes it difficult to track new versus returning 
+      visitors, measure church growth over time, communicate with members effectively, or 
+      maintain accurate records of serving ministry involvement. These limitations have 
+      created a need for a more sophisticated digital solution.
+    </p>
+  </div>
+
+  <div class="figure">
+    <img src="https://placehold.co/700x300/2c3e50/white?text=System+Architecture+Diagram" alt="System Architecture">
+    <p class="figure-caption">Figure 1: Proposed System Architecture</p>
+  </div>
+
+  <div class="page-break"></div>
+
+  <div class="section">
+    <h3>7. Proposed System</h3>
+    <p>
+      The proposed Church Registration System is a comprehensive web-based application that 
+      completely replaces the manual paper-based process with a modern digital solution. 
+      The system is designed with two primary interfaces:
+    </p>
+    <p><strong>7.1 Registration Portal (Public Interface)</strong></p>
+    <p>
+      The registration portal is accessible to any visitor or member via a web browser. It 
+      features a 3-step registration wizard with the following capabilities:
+    </p>
+    <div style="margin: 12px 0; background: #f8f9fa; padding: 12px; border-radius: 5px;">
+      <div class="flow-step"><strong>Step 1 - Basic Information:</strong> Collects full name, phone number, residence, and registration status</div>
+      <div class="flow-step"><strong>Step 2 - Serving & Preferences:</strong> Captures birthday (optional), serving opportunities, WhatsApp consent, and referral source</div>
+      <div class="flow-step"><strong>Step 3 - Confirmation:</strong> Allows users to review and verify their information before submission</div>
+    </div>
+    
+    <p><strong>7.2 Admin Dashboard (Restricted Interface)</strong></p>
+    <p>
+      The administrative dashboard provides authorized church leadership with tools to manage 
+      registration data effectively:
+    </p>
+    <ul style="margin-left: 20px; margin-bottom: 15px; font-size: 11pt;">
+      <li>Secure login with email and password authentication</li>
+      <li>Searchable and filterable list of all registrations</li>
+      <li>Statistical charts showing registration trends and demographics</li>
+      <li>Export functionality for downloading data</li>
+      <li>Real-time synchronization with cloud database</li>
+    </ul>
+    
+    <p><strong>7.3 Key Improvements Over Existing System</strong></p>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Proposed Digital System</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="new">
+          <td><strong>Data Storage</strong></td>
+          <td>Cloud-based database with automatic backups</td>
+        </tr>
+        <tr class="new">
+          <td><strong>Data Retrieval</strong></td>
+          <td>Instant search and filtering capabilities</td>
+        </tr>
+        <tr class="new">
+          <td><strong>Data Analysis</strong></td>
+          <td>Automated reports and visual analytics</td>
+        </tr>
+        <tr class="new">
+          <td><strong>Data Accuracy</strong></td>
+          <td>Form validation ensures complete and correct data</td>
+        </tr>
+        <tr class="new">
+          <td><strong>Accessibility</strong></td>
+          <td>Access from anywhere with internet connectivity</td>
+        </tr>
+        <tr class="new">
+          <td><strong>Backup</strong></td>
+          <td>Automatic cloud backup and redundancy</td>
+        </tr>
+        <tr class="new">
+          <td><strong>24/7 Availability</strong></td>
+          <td>Always accessible for registrations</td>
+        </tr>
+        <tr class="new">
+          <td><strong>PWA Support</strong></td>
+          <td>Installable app with offline capabilities</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="figure">
+    <img src="https://placehold.co/700x250/27ae60/white?text=User+Flow+Diagram" alt="User Flow">
+    <p class="figure-caption">Figure 2: User Registration Flow</p>
+  </div>
+
+  <div class="section">
+    <h3>8. System Requirements</h3>
+    
+    <p><strong>8.1 Hardware Requirements</strong></p>
+    <table class="req-table">
+      <tr>
+        <td>Client Device</td>
+        <td>Computer, tablet, or smartphone with web browser</td>
+      </tr>
+      <tr>
+        <td>Processor</td>
+        <td>1 GHz or faster processor</td>
+      </tr>
+      <tr>
+        <td>RAM</td>
+        <td>Minimum 512 MB (recommended 2 GB or more)</td>
+      </tr>
+      <tr>
+        <td>Storage</td>
+        <td>Device storage for PWA installation (optional)</td>
+      </tr>
+      <tr>
+        <td>Display</td>
+        <td>SVGA monitor or higher resolution</td>
+      </tr>
+      <tr>
+        <td>Internet Connection</td>
+        <td>Broadband connection (minimum 256 Kbps)</td>
+      </tr>
+    </table>
+
+    <p><strong>8.2 Software Requirements</strong></p>
+    <table class="req-table">
+      <tr>
+        <td>Operating System</td>
+        <td>Windows 7+, macOS 10.14+, Linux, Android 7+, iOS 12+</td>
+      </tr>
+      <tr>
+        <td>Web Browser</td>
+        <td>Chrome (recommended), Firefox, Safari, Edge (latest versions)</td>
+      </tr>
+      <tr>
+        <td>Frontend Technologies</td>
+        <td>HTML5, CSS3, JavaScript (ES6)</td>
+      </tr>
+      <tr>
+        <td>Backend/Database</td>
+        <td>Firebase Firestore (cloud NoSQL database)</td>
+      </tr>
+      <tr>
+        <td>Authentication</td>
+        <td>Firebase Authentication</td>
+      </tr>
+      <tr>
+        <td>Hosting</td>
+        <td>Firebase Hosting (or any web hosting)</td>
+      </tr>
+      <tr>
+        <td>PWA Support</td>
+        <td>Service Worker API, Web App Manifest</td>
+      </tr>
+    </table>
+
+    <p><strong>8.3 Functional Requirements</strong></p>
+    <table class="req-table">
+      <tr>
+        <td>User Registration</td>
+        <td>System must allow visitors to register their information online</td>
+      </tr>
+      <tr>
+        <td>Data Validation</td>
+        <td>System must validate required fields before submission</td>
+      </tr>
+      <tr>
+        <td>Confirmation Screen</td>
+        <td>System must display registration summary before final submission</td>
+      </tr>
+      <tr>
+        <td>Admin Authentication</td>
+        <td>System must require login for administrative access</td>
+      </tr>
+      <tr>
+        <td>Data Display</td>
+        <td>System must display all registrations in a sortable list</td>
+      </tr>
+      <tr>
+        <td>Search Function</td>
+        <td>System must allow searching registrations by name or phone</td>
+      </tr>
+      <tr>
+        <td>Statistics</td>
+        <td>System must display visual charts of registration data</td>
+      </tr>
+      <tr>
+        <td>Export Data</td>
+        <td>System must allow exporting data to file</td>
+      </tr>
+      <tr>
+        <td>PWA Installation</td>
+        <td>System must be installable as a standalone app</td>
+      </tr>
+      <tr>
+        <td>Offline Support</td>
+        <td>System must function partially when offline</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h3>9. Methodology</h3>
+    <p>
+      The development of this system follows a structured approach combining analysis, 
+      design, development, and testing phases:
+    </p>
+    <div class="methodology">
+      <h4>Development Approach</h4>
+      <ol>
+        <li><strong>Requirements Gathering:</strong> Analysis of current processes and user needs</li>
+        <li><strong>System Design:</strong> Creating wireframes, data models, and system architecture</li>
+        <li><strong>Frontend Development:</strong> Building HTML, CSS, and JavaScript components</li>
+        <li><strong>Backend Integration:</strong> Setting up Firebase services and authentication</li>
+        <li><strong>Testing:</strong> Cross-browser testing and user acceptance testing</li>
+        <li><strong>Deployment:</strong> Publishing to Firebase Hosting</li>
+        <li><strong>Maintenance:</strong> Ongoing updates and improvements</li>
+      </ol>
+    </div>
+    <div class="diagrams">
+      <div class="diagram-box">
+        <h4>Frontend Layer</h4>
+        <p>HTML5, CSS3, JavaScript<br>PWA with Service Worker</p>
+      </div>
+      <div class="diagram-box">
+        <h4>Backend Layer</h4>
+        <p>Firebase Firestore<br>Firebase Authentication</p>
+      </div>
+      <div class="diagram-box">
+        <h4>Admin Layer</h4>
+        <p>Dashboard with Charts<br>Export & Search Features</p>
+      </div>
+      <div class="diagram-box">
+        <h4>Cloud Layer</h4>
+        <p>Firebase Hosting<br>Cloud Storage</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <div class="section">
+    <h3>10. Future Work</h3>
+    <p>
+      While the current system addresses the immediate needs of church registration, several 
+      enhancements can be implemented in future versions to increase functionality and value:
+    </p>
+    <div class="features">
+      <div class="feature-item">
+        <strong>Bulk SMS Integration</strong><br>
+        Integrate SMS gateway (e.g., Africa's Talking, Twilio) for sending automated 
+        announcements, event reminders, and birthday wishes to members
+      </div>
+      <div class="feature-item">
+        <strong>Google Sheets Sync</strong><br>
+        Automatic synchronization with Google Sheets for offline backup and easier 
+        data sharing with church leadership
+      </div>
+      <div class="feature-item">
+        <strong>Mobile App Version</strong><br>
+        Develop native mobile applications (iOS/Android) for enhanced performance 
+        and features
+      </div>
+      <div class="feature-item">
+        <strong>Attendance Tracking</strong><br>
+        Add weekly attendance marking to track member engagement and participation
+      </div>
+      <div class="feature-item">
+        <strong>Event Registration</strong><br>
+        Module for registering members for church events, conferences, and seminars
+      </div>
+      <div class="feature-item">
+        <strong>Giving/Donations</strong><br>
+        Online giving and tithing platform integrated with mobile money (MTN, Airtel)
+      </div>
+      <div class="feature-item">
+        <strong>Small Groups Management</strong><br>
+        Assign members to cell groups and track small group activities
+      </div>
+      <div class="feature-item">
+        <strong>Email Notifications</strong><br>
+        Automated welcome emails and newsletter subscriptions
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>11. Conclusion</h3>
+    <p>
+      The Church Registration System for Grace of Jesus Christ Ministries represents a 
+      significant advancement in the church's operational capabilities. By replacing the 
+      manual paper-based process with a modern digital solution, the church will benefit 
+      from improved data management, better member engagement, and enhanced administrative 
+      efficiency. The system's user-friendly interface ensures that both church members 
+      and administrators can easily navigate and utilize its features.
+    </p>
+    <p>
+      The implementation of this system demonstrates how technology can be effectively 
+      leveraged to support religious organizations in their mission of community building 
+      and spiritual growth. With the foundation established by this system, the church can 
+      continue to expand its digital capabilities and better serve its congregation in 
+      the years to come.
+    </p>
+  </div>
+
+  <div class="section">
+    <h3>12. References</h3>
+    <ul class="references" data-num="1">
+      <li>Firebase Documentation. (2026). Firebase Firestore. Google. Retrieved from https://firebase.google.com/docs/firestore</li>
+      <li data-num="2">Firebase Documentation. (2026). Firebase Authentication. Google. Retrieved from https://firebase.google.com/docs/auth</li>
+      <li data-num="3">Firebase Documentation. (2026). Firebase Hosting. Google. Retrieved from https://firebase.google.com/docs/hosting</li>
+      <li data-num="4">MDN Web Docs. (2026). Progressive Web Apps. Mozilla. Retrieved from https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps</li>
+      <li data-num="5">Google Developers. (2026). Web App Manifest. Retrieved from https://developers.google.com/web/fundamentals/primers/service-workers</li>
+      <li data-num="6">Chart.js Documentation. (2026). Chart.js Library. Retrieved from https://www.chartjs.org/docs/</li>
+      <li data-num="7">World Wide Web Consortium (W3C). (2026). HTML5 Specification. Retrieved from https://www.w3.org/html/</li>
+      <li data-num="8">World Wide Web Consortium (W3C). (2026). CSS Snapshot 2026. Retrieved from https://www.w3.org/Style/CSS/</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3>13. Technical Implementation Details</h3>
+    <div class="two-col">
+      <div>
+        <h4 style="color: #2c3e50; margin-bottom: 8px; font-size: 11pt;">Registration Portal Features</h4>
+        <div class="features" style="grid-template-columns: 1fr;">
+          <div class="feature-item">Multi-step Form (3 steps)</div>
+          <div class="feature-item">Member Information Collection</div>
+          <div class="feature-item">Serving Opportunities</div>
+          <div class="feature-item">Birthday Tracking</div>
+          <div class="feature-item">WhatsApp Integration</div>
+          <div class="feature-item">Referral Source Tracking</div>
+          <div class="feature-item">PWA Support</div>
+          <div class="feature-item">Offline Support</div>
+        </div>
+      </div>
+      <div>
+        <h4 style="color: #2c3e50; margin-bottom: 8px; font-size: 11pt;">Admin Dashboard Features</h4>
+        <div class="features" style="grid-template-columns: 1fr;">
+          <div class="feature-item">Secure Authentication</div>
+          <div class="feature-item">Registration View</div>
+          <div class="feature-item">Statistics Dashboard</div>
+          <div class="feature-item">Export Data</div>
+          <div class="feature-item">Real-time Updates</div>
+          <div class="feature-item">User Management</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>14. Data Fields Collected</h3>
+    <div class="data-fields">
+      <table>
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Full Name</td>
+            <td>Text</td>
+            <td>Yes</td>
+            <td>Member's complete name</td>
+          </tr>
+          <tr>
+            <td>Phone Number</td>
+            <td>Phone</td>
+            <td>Yes</td>
+            <td>Contact number</td>
+          </tr>
+          <tr>
+            <td>Residence</td>
+            <td>Text</td>
+            <td>Yes</td>
+            <td>Physical location</td>
+          </tr>
+          <tr>
+            <td>First Time Online</td>
+            <td>Boolean</td>
+            <td>Yes</td>
+            <td>New vs returning registrant</td>
+          </tr>
+          <tr>
+            <td>Birthday</td>
+            <td>Date</td>
+            <td>No</td>
+            <td>Day and month</td>
+          </tr>
+          <tr>
+            <td>Serving Options</td>
+            <td>Multi-select</td>
+            <td>No</td>
+            <td>Ministry involvement</td>
+          </tr>
+          <tr>
+            <td>WhatsApp Consent</td>
+            <td>Boolean</td>
+            <td>Yes</td>
+            <td>Group join preference</td>
+          </tr>
+          <tr>
+            <td>Referral Source</td>
+            <td>Text</td>
+            <td>No</td>
+            <td>How they heard about church</td>
+          </tr>
+          <tr>
+            <td>Timestamp</td>
+            <td>DateTime</td>
+            <td>Auto</td>
+            <td>Registration date/time</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>15. System Architecture</h3>
+    <p>
+      The application uses a serverless architecture hosted on Firebase Hosting. 
+      User registrations are stored in Firebase Firestore, a NoSQL cloud database. 
+      The admin dashboard authenticates users via Firebase Authentication and provides 
+      real-time access to registration data. Google Apps Script can be used to sync 
+      data with Google Sheets for offline backup and additional processing.
+    </p>
+    <div class="tech-stack">
+      <ul>
+        <li>HTML5 & CSS3</li>
+        <li>JavaScript (ES6 Modules)</li>
+        <li>Firebase Firestore</li>
+        <li>Firebase Authentication</li>
+        <li>Firebase Hosting</li>
+        <li>Progressive Web App (PWA)</li>
+        <li>Chart.js (Analytics)</li>
+        <li>Google Apps Script (Sync)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="figure">
+    <img src="https://placehold.co/700x200/2c3e50/white?text=Technology+Stack+Overview" alt="Technology Stack">
+    <p class="figure-caption">Figure 3: Technology Stack Components</p>
+  </div>
+
+  <div class="footer">
+    <p><strong>Grace of Jesus Christ Ministries – Kitintale</strong></p>
+    <p>"An encounter with the Holy Spirit"</p>
+    <p>Sunday Service: 8:00 AM | Location: Kitintale, Kampala, Uganda</p>
+    <p>Generated: March 2026</p>
+  </div>
+
+</body>
+</html>

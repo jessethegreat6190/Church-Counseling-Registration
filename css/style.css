@@ -645,6 +645,49 @@ body {
    border-color: #e74c3c;
 }
 
+/* Floating Labels */
+.form-group.floating {
+   position: relative;
+   margin-bottom: 28px;
+}
+.form-group.floating input {
+   height: 58px;
+   padding: 22px 16px 8px;
+   background: transparent;
+   border-color: #d5dbdb;
+}
+.form-group.floating input:focus {
+   background: transparent;
+   border-color: var(--secondary-blue);
+}
+.form-group.floating label {
+   position: absolute;
+   left: 16px;
+   top: 50%;
+   transform: translateY(-50%);
+   font-size: 0.95rem;
+   font-weight: 500;
+   color: var(--gray);
+   pointer-events: none;
+   transition: all 0.2s ease;
+   margin: 0;
+   background: var(--white);
+   padding: 0 4px;
+   display: inline;
+   line-height: 1;
+}
+.form-group.floating input:focus + label,
+.form-group.floating input:not(:placeholder-shown) + label {
+   top: 10px;
+   transform: translateY(0);
+   font-size: 0.7rem;
+   font-weight: 600;
+   color: var(--secondary-blue);
+}
+.form-group.floating input.error + label {
+   color: #e74c3c;
+}
+
 /* Fieldset & Legend */
 fieldset {
    border: 1.5px solid var(--light-gray);

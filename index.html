@@ -150,19 +150,19 @@
       <!-- STEP 1 -->
       <div class="card step active" id="step-1">
         <h3>Your Information</h3>
-        <div class="form-group">
+        <div class="form-group floating">
+          <input type="text" id="name" placeholder=" " required autocomplete="name">
           <label for="name">Full Name <span class="required">*</span></label>
-          <input type="text" id="name" placeholder="Enter your full name" required autocomplete="name">
           <span class="field-error" id="err-name" role="alert"></span>
         </div>
-        <div class="form-group">
+        <div class="form-group floating">
+          <input type="tel" id="phone" placeholder=" " required autocomplete="tel">
           <label for="phone">Phone Number <span class="required">*</span></label>
-          <input type="tel" id="phone" placeholder="e.g. 0700 000 000" required autocomplete="tel">
           <span class="field-error" id="err-phone" role="alert"></span>
         </div>
-        <div class="form-group">
+        <div class="form-group floating">
+          <input type="text" id="location" placeholder=" " required>
           <label for="location">Residence <span class="required">*</span></label>
-          <input type="text" id="location" placeholder="Where do you live?" required>
           <span class="field-error" id="err-location" role="alert"></span>
         </div>
 
@@ -186,8 +186,8 @@
 
         <div id="eventFields" style="display:none;">
           <div id="weddingFields" class="event-fields">
-            <div class="form-group"><label for="groomName">Groom's Name</label><input type="text" id="groomName" placeholder="Groom's full name"></div>
-            <div class="form-group"><label for="brideName">Bride's Name</label><input type="text" id="brideName" placeholder="Bride's full name"></div>
+            <div class="form-group floating"><input type="text" id="groomName" placeholder=" "><label for="groomName">Groom's Name</label></div>
+            <div class="form-group floating"><input type="text" id="brideName" placeholder=" "><label for="brideName">Bride's Name</label></div>
             <div class="form-group"><label for="weddingDate">Expected Wedding Date</label><input type="date" id="weddingDate"></div>
           </div>
           <div id="baptismFields" class="event-fields">
@@ -236,9 +236,9 @@
           <label for="consent">Would you like to be added to the WhatsApp group?</label>
         </div>
 
-        <div class="form-group">
+        <div class="form-group floating">
+          <input type="text" id="referredBy" placeholder=" ">
           <label for="referredBy">How did you hear about us? <span class="optional">(Optional)</span></label>
-          <input type="text" id="referredBy" placeholder="Friend, social media, flyer...">
         </div>
 
         <div class="btn-row">

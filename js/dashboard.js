@@ -1,13 +1,17 @@
+const ADMIN_UID = 'Bi68Kqd5jBPun5bIgXo0u5yTNmj2';
+
 const firebaseConfig = {
-  apiKey: "AIzaSyD2xFPG6X7K2xFPG6X7K2xFPG6X7K2xFPG",
+  apiKey: "AIzaSyDyARd_4HXdx9gEOguMDvncPV17j7kum-s",
   authDomain: "church-registration-grace.firebaseapp.com",
   projectId: "church-registration-grace",
-  storageBucket: "church-registration-grace.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abc123456"
+  storageBucket: "church-registration-grace.firebasestorage.app",
+  messagingSenderId: "402796692999",
+  appId: "1:402796692999:web:15f01064b41197c4c9cca2",
+  measurementId: "G-L3CD5ZX957"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const auth = firebase.auth();
 
 let allMembers = [];
 let allRegistrations = [];
@@ -15,13 +19,27 @@ let isLoggedIn = false;
 
 document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-// Initialize based on stored login state
-if (localStorage.getItem('dashboardLoggedIn') === 'true') {
-  isLoggedIn = true;
-  document.getElementById('adminBtn').textContent = 'Logout';
-}
+auth.onAuthStateChanged(function(user) {
+  if (user && user.uid === ADMIN_UID) {
+    isLoggedIn = true;
+    document.getElementById('adminBtn').textContent = 'Logout';
+    document.getElementById('loginError').style.display = 'none';
+    hideLoginModal();
+  } else if (user && user.uid !== ADMIN_UID) {
+    auth.signOut();
+  } else {
+    isLoggedIn = false;
+    document.getElementById('adminBtn').textContent = 'Admin Login';
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+    if (document.getElementById('section-dashboard')) {
+      document.getElementById('section-dashboard').classList.add('active');
+    }
+  }
+});
 
 function showSection(section) {
+  if (!isLoggedIn) { showLoginModal(); return; }
   document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
   document.getElementById('section-' + section).classList.add('active');
   document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
@@ -41,21 +59,27 @@ function hideLoginModal() { document.getElementById('loginModal').classList.remo
 
 document.getElementById('loginForm').onsubmit = function(e) {
   e.preventDefault();
-  isLoggedIn = true;
-  localStorage.setItem('dashboardLoggedIn', 'true');
-  hideLoginModal();
-  document.getElementById('adminBtn').textContent = 'Logout';
-  showSection('dashboard');
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const errorEl = document.getElementById('loginError');
+  errorEl.style.display = 'none';
+  auth.signInWithEmailAndPassword(email, password)
+    .then(function(userCred) {
+      if (userCred.user.uid !== ADMIN_UID) {
+        auth.signOut();
+        errorEl.textContent = 'Access denied. You are not authorized as admin.';
+        errorEl.style.display = 'block';
+      }
+    })
+    .catch(function(err) {
+      errorEl.textContent = err.message;
+      errorEl.style.display = 'block';
+    });
 };
 
 function handleAdminBtn() {
   if (isLoggedIn) {
-    isLoggedIn = false;
-    localStorage.removeItem('dashboardLoggedIn');
-    document.getElementById('adminBtn').textContent = 'Admin Login';
-    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-    document.getElementById('section-dashboard').classList.add('active');
+    auth.signOut();
   } else {
     showLoginModal();
   }
@@ -239,7 +263,6 @@ function cleanPhone(phone) {
   return String(phone || '').replace(/\D/g, '').slice(-9);
 }
 
-// Sidebar click handlers
 document.querySelectorAll('.sidebar-item[data-section]').forEach(item => {
   item.addEventListener('click', () => {
     if (!isLoggedIn) {
@@ -250,4 +273,6 @@ document.querySelectorAll('.sidebar-item[data-section]').forEach(item => {
   });
 });
 
-loadDashboard();
+if (auth.currentUser) {
+  loadDashboard();
+}

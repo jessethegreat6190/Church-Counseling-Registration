@@ -1,0 +1,27 @@
+{
+  "name": "churchregistration",
+  "version": "1.0.0",
+  "description": "",
+  "main": "capture_shots.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://jessethegreat6190@github.com/jessethegreat6190/Church-Registration.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jessethegreat6190/Church-Registration/issues"
+  },
+  "homepage": "https://github.com/jessethegreat6190/Church-Registration#readme",
+  "dependencies": {
+    "playwright": "^1.60.0"
+  }
+}

@@ -48,7 +48,6 @@ document.querySelectorAll('input[name="registrationType"]').forEach(radio => {
     const eventFields = document.getElementById('eventFields');
     if (type !== 'general') {
       eventFields.style.display = 'block';
-      document.getElementById('weddingFields').style.display = type === 'wedding' ? 'block' : 'none';
       document.getElementById('baptismFields').style.display = type === 'baptism' ? 'block' : 'none';
       document.getElementById('counselingFields').style.display = type === 'counseling' ? 'block' : 'none';
     } else {
@@ -243,11 +242,7 @@ function buildEntry() {
   }
 
   const eventData = {};
-  if (registrationType === 'wedding') {
-    eventData.groomName = document.getElementById('groomName')?.value.trim() || '';
-    eventData.brideName = document.getElementById('brideName')?.value.trim() || '';
-    eventData.weddingDate = document.getElementById('weddingDate')?.value || '';
-  } else if (registrationType === 'baptism') {
+  if (registrationType === 'baptism') {
     eventData.baptismDate = document.getElementById('baptismDate')?.value || '';
     eventData.ageGroup = document.getElementById('ageGroup')?.value || '';
   } else if (registrationType === 'counseling') {
@@ -287,17 +282,13 @@ function renderConfirmation(data) {
   const volStr = data.volunteering.length > 0 ? data.volunteering.join(', ') : 'Not interested';
 
   const eventTypeLabels = {
-    general: 'General Registration', wedding: 'Wedding', baptism: 'Baptism',
+    general: 'General Registration', baptism: 'Baptism',
     counseling: 'Counseling'
   };
   const eventTypeDisplay = eventTypeLabels[data.registrationType] || 'General Registration';
 
   let eventDetails = '';
-  if (data.registrationType === 'wedding' && data.groomName) {
-    eventDetails += `<li><strong>Groom</strong> ${data.groomName}</li>`;
-    eventDetails += `<li><strong>Bride</strong> ${data.brideName}</li>`;
-    eventDetails += `<li><strong>Wedding Date</strong> ${data.weddingDate}</li>`;
-  } else if (data.registrationType === 'baptism' && data.baptismDate) {
+  if (data.registrationType === 'baptism' && data.baptismDate) {
     eventDetails += `<li><strong>Baptism Date</strong> ${data.baptismDate}</li>`;
     eventDetails += `<li><strong>Age Group</strong> ${data.ageGroup}</li>`;
   } else if (data.registrationType === 'counseling' && data.counselingTopic) {
@@ -348,8 +339,7 @@ async function handleSave() {
     whatsapp: currentEntry.consent ? currentEntry.phone : '—',
     volunteering: currentEntry.volunteering.join(', '),
     referredBy: currentEntry.referredBy || '', registrationType: regType,
-    groomName: currentEntry.groomName || '', brideName: currentEntry.brideName || '',
-    weddingDate: currentEntry.weddingDate || '', baptismDate: currentEntry.baptismDate || '',
+    baptismDate: currentEntry.baptismDate || '',
     ageGroup: currentEntry.ageGroup || '',
     counselingTopic: currentEntry.counselingTopic || '', preferredDate: currentEntry.preferredDate || '',
     status: 'pending'

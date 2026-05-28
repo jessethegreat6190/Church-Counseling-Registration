@@ -179,7 +179,6 @@
           <div class="radio-group">
             <label><input type="radio" name="registrationType" value="general" checked> General Church Registration</label>
             <label><input type="radio" name="registrationType" value="baptism"> Baptism</label>
-            <label><input type="radio" name="registrationType" value="counseling"> Counseling</label>
           </div>
         </fieldset>
 
@@ -189,12 +188,6 @@
             <div class="form-group"><label for="ageGroup">Age Group</label>
               <select id="ageGroup"><option value="">Select age group</option><option value="child">Child (under 18)</option><option value="adult">Adult (18+)</option></select>
             </div>
-          </div>
-          <div id="counselingFields" class="event-fields">
-            <div class="form-group"><label for="counselingTopic">Topic for Counseling</label>
-              <select id="counselingTopic"><option value="">Select topic</option><option value="marriage">Marriage Counseling</option><option value="family">Family Issues</option><option value="spiritual">Spiritual Guidance</option><option value="financial">Financial Counseling</option><option value="other">Other</option></select>
-            </div>
-            <div class="form-group"><label for="preferredDate">Preferred Date</label><input type="date" id="preferredDate"></div>
           </div>
         </div>
 
@@ -283,19 +276,19 @@
     </div>
 
     <!-- Live Stream Banner -->
-    <div class="live-banner">
-      <div class="live-content">
-        <div class="live-indicator">
-          <span class="live-dot"></span>
-          <span>WATCH LIVE SERVICE</span>
+    <a href="https://www.youtube.com/@encounter_GJM/live" target="_blank" class="live-banner-link">
+      <div class="live-banner">
+        <div class="live-content">
+          <div class="live-indicator">
+            <span class="live-dot"></span>
+            <span>WATCH LIVE SERVICE</span>
+          </div>
+          <h3>Grace of Jesus Christ Ministries</h3>
+          <p>Every Sunday 8:00 AM — Experience the presence of God</p>
+          <span class="btn-live"><i class="fab fa-youtube"></i> Watch on YouTube</span>
         </div>
-        <h3>Grace of Jesus Christ Ministries</h3>
-        <p>Join our Sunday service at 8:00 AM and experience the presence of God.</p>
-        <a href="https://www.youtube.com/@encounter_GJM/live" target="_blank" class="btn btn-live">
-          <i class="fab fa-youtube"></i> Watch Live Now
-        </a>
       </div>
-    </div>
+    </a>
 
     <!-- Recent Videos Grid -->
     <div class="youtube-videos" id="youtubeVideos"></div>

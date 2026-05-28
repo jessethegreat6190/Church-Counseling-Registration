@@ -49,7 +49,6 @@ document.querySelectorAll('input[name="registrationType"]').forEach(radio => {
     if (type !== 'general') {
       eventFields.style.display = 'block';
       document.getElementById('baptismFields').style.display = type === 'baptism' ? 'block' : 'none';
-      document.getElementById('counselingFields').style.display = type === 'counseling' ? 'block' : 'none';
     } else {
       eventFields.style.display = 'none';
     }
@@ -245,9 +244,6 @@ function buildEntry() {
   if (registrationType === 'baptism') {
     eventData.baptismDate = document.getElementById('baptismDate')?.value || '';
     eventData.ageGroup = document.getElementById('ageGroup')?.value || '';
-  } else if (registrationType === 'counseling') {
-    eventData.counselingTopic = document.getElementById('counselingTopic')?.value || '';
-    eventData.preferredDate = document.getElementById('preferredDate')?.value || '';
   }
 
   currentEntry = {
@@ -282,8 +278,7 @@ function renderConfirmation(data) {
   const volStr = data.volunteering.length > 0 ? data.volunteering.join(', ') : 'Not interested';
 
   const eventTypeLabels = {
-    general: 'General Registration', baptism: 'Baptism',
-    counseling: 'Counseling'
+    general: 'General Registration', baptism: 'Baptism'
   };
   const eventTypeDisplay = eventTypeLabels[data.registrationType] || 'General Registration';
 
@@ -291,9 +286,6 @@ function renderConfirmation(data) {
   if (data.registrationType === 'baptism' && data.baptismDate) {
     eventDetails += `<li><strong>Baptism Date</strong> ${data.baptismDate}</li>`;
     eventDetails += `<li><strong>Age Group</strong> ${data.ageGroup}</li>`;
-  } else if (data.registrationType === 'counseling' && data.counselingTopic) {
-    eventDetails += `<li><strong>Topic</strong> ${data.counselingTopic}</li>`;
-    eventDetails += `<li><strong>Preferred Date</strong> ${data.preferredDate}</li>`;
   }
 
   if (data.firstTime === 'no') {
@@ -341,7 +333,6 @@ async function handleSave() {
     referredBy: currentEntry.referredBy || '', registrationType: regType,
     baptismDate: currentEntry.baptismDate || '',
     ageGroup: currentEntry.ageGroup || '',
-    counselingTopic: currentEntry.counselingTopic || '', preferredDate: currentEntry.preferredDate || '',
     status: 'pending'
   };
 

@@ -19,22 +19,28 @@ let isLoggedIn = false;
 
 document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
+let authInitTimer = setTimeout(function() {
+  window.location.href = 'index.html';
+}, 2000);
+
+let wasAdmin = false;
+
 auth.onAuthStateChanged(function(user) {
   if (user && user.uid === ADMIN_UID) {
+    wasAdmin = true;
     isLoggedIn = true;
     document.getElementById('adminBtn').textContent = 'Logout';
     document.getElementById('loginError').style.display = 'none';
     hideLoginModal();
+    clearTimeout(authInitTimer);
+    authInitTimer = null;
   } else if (user && user.uid !== ADMIN_UID) {
     auth.signOut();
-  } else {
+    window.location.href = 'index.html';
+  } else if (!wasAdmin) {
     isLoggedIn = false;
-    document.getElementById('adminBtn').textContent = 'Admin Login';
-    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-    if (document.getElementById('section-dashboard')) {
-      document.getElementById('section-dashboard').classList.add('active');
-    }
+  } else {
+    window.location.href = 'index.html';
   }
 });
 

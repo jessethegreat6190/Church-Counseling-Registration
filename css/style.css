@@ -129,6 +129,7 @@ body {
 .nav-links li:nth-child(4) .animated-icon { animation-delay: 0.2s; }
 .nav-links li:nth-child(5) .animated-icon { animation-delay: 0.25s; }
 .nav-links li:nth-child(6) .animated-icon { animation-delay: 0.3s; }
+.nav-links li:nth-child(7) .animated-icon { animation-delay: 0.35s; }
 .nav-links a:hover .animated-icon {
   transform: translateY(-2px);
   color: var(--secondary-blue);

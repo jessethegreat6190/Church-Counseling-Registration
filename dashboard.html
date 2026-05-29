@@ -31,6 +31,7 @@
   <nav class="sidebar">
     <ul class="sidebar-menu">
       <li class="sidebar-item active" data-section="dashboard"><i class="fas fa-home"></i> Dashboard</li>
+      <li class="sidebar-item" data-section="reports"><i class="fas fa-file-alt"></i> Reports</li>
       <li class="sidebar-item" data-section="members"><i class="fas fa-users"></i> Members</li>
       <li class="sidebar-item" data-section="programs"><i class="fas fa-calendar-alt"></i> Programs</li>
       <li class="sidebar-item" data-section="events"><i class="fas fa-church"></i> Events</li>
@@ -87,6 +88,81 @@
           </thead>
           <tbody id="recentRegistrations">
             <tr><td colspan="5" style="text-align:center;color:#6c757d">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REPORTS SECTION -->
+    <div id="section-reports" class="form-section">
+      <div class="content-header">
+        <h2 class="content-title">Registration Reports</h2>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-primary" onclick="exportCSV()"><i class="fas fa-download"></i> Export CSV</button>
+          <button class="btn-secondary" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+        </div>
+      </div>
+
+      <div class="cards-grid" style="margin-bottom:20px;">
+        <div class="stat-card">
+          <div class="stat-icon maroon"><i class="fas fa-users"></i></div>
+          <div class="stat-value" id="reportTotalReg">0</div>
+          <div class="stat-label">Total Registrations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gold"><i class="fas fa-clock"></i></div>
+          <div class="stat-value" id="reportPending">0</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-value" id="reportActive">0</div>
+          <div class="stat-label">Active Members</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red"><i class="fas fa-layer-group"></i></div>
+          <div class="stat-value" id="reportDepartments">0</div>
+          <div class="stat-label">Departments</div>
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" class="search-input" id="reportSearch" placeholder="Search by name, phone, department..." onkeyup="filterReports()">
+        <select class="form-select" id="reportDeptFilter" onchange="filterReports()" style="width:auto;">
+          <option value="">All Departments</option>
+          <option value="Ushering">Ushering</option>
+          <option value="Choir">Choir</option>
+          <option value="Instruments">Instruments</option>
+          <option value="Venue Management">Venue Management</option>
+          <option value="Intercessory">Intercessory</option>
+          <option value="Media">Media</option>
+          <option value="Protocol">Protocol</option>
+          <option value="Other">Other</option>
+        </select>
+        <select class="form-select" id="reportStatusFilter" onchange="filterReports()" style="width:auto;">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="pending">Pending</option>
+          <option value="new">New</option>
+        </select>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table" id="reportTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Department</th>
+              <th>Location</th>
+              <th>Referred By</th>
+              <th>Registered</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="reportsTableBody">
+            <tr><td colspan="8" style="text-align:center;color:#6c757d">Loading...</td></tr>
           </tbody>
         </table>
       </div>

@@ -62,6 +62,7 @@ function showSection(section) {
   if (activeItem) activeItem.classList.add('active');
   
   if (section === 'dashboard') loadDashboard();
+  if (section === 'reports') loadReports();
   if (section === 'members') loadMembers();
   if (section === 'events') loadEvents();
   if (section === 'pastoral') loadCare();
@@ -281,6 +282,65 @@ function saveAttendance() {
   const attendance = Array.from(checkboxes).map(cb => cb.dataset.phone);
   localStorage.setItem('today_attendance', JSON.stringify(attendance));
   alert('Attendance saved! (' + attendance.length + ' present)');
+}
+
+/* ─── REPORTS ─── */
+let reportData = [];
+
+async function loadReports() {
+  try {
+    const snapshot = await db.collection('registrations').get();
+    reportData = snapshot.docs.map(d => {
+      const data = d.data();
+      return { id: d.id, ...data, status: data.status || 'new' };
+    });
+    renderReports(reportData);
+  } catch (e) {
+    console.error('Reports load error:', e);
+    document.getElementById('reportsTableBody').innerHTML = '<tr><td colspan="8" style="text-align:center;color:#e74c3c">Error loading reports</td></tr>';
+  }
+}
+
+function renderReports(data) {
+  const pending = data.filter(r => r.status === 'pending' || r.status === 'new').length;
+  const active = data.filter(r => r.status === 'active').length;
+  const depts = [...new Set(data.map(r => r.department).filter(Boolean))];
+
+  document.getElementById('reportTotalReg').textContent = data.length;
+  document.getElementById('reportPending').textContent = pending;
+  document.getElementById('reportActive').textContent = active;
+  document.getElementById('reportDepartments').textContent = depts.length;
+
+  document.getElementById('reportsTableBody').innerHTML = data.map((r, i) =>
+    '<tr><td>' + (i + 1) + '</td><td>' + (r.name || '-') + '</td><td>' + (r.phone || '-') + '</td><td>' + (r.department || '-') + '</td><td>' + (r.location || '-') + '</td><td>' + (r.referredBy || '-') + '</td><td>' + (r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '-') + '</td><td><span class="status-badge ' + (r.status || 'new') + '">' + (r.status || 'new') + '</span></td></tr>'
+  ).join('');
+}
+
+function filterReports() {
+  const q = document.getElementById('reportSearch').value.toLowerCase();
+  const dept = document.getElementById('reportDeptFilter').value;
+  const status = document.getElementById('reportStatusFilter').value;
+  let filtered = reportData;
+  if (q) filtered = filtered.filter(r => (r.name + ' ' + r.phone + ' ' + r.department).toLowerCase().includes(q));
+  if (dept) filtered = filtered.filter(r => r.department === dept);
+  if (status) filtered = filtered.filter(r => r.status === status);
+  renderReports(filtered);
+}
+
+function exportCSV() {
+  const headers = ['Name', 'Phone', 'Department', 'Location', 'Referred By', 'Registered', 'Status'];
+  const rows = reportData.map(r => [
+    r.name || '', r.phone || '', r.department || '', r.location || '', r.referredBy || '',
+    r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '', r.status || 'new'
+  ]);
+  const csv = [headers.join(','), ...rows.map(row => row.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'registrations_report_' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function cleanPhone(phone) {

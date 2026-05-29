@@ -52,14 +52,16 @@ body {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  padding: 8px 0;
-  transition: var(--transition);
-  background: rgba(44,62,80,0.95);
+  padding: 10px 0;
+  transition: all 0.4s ease;
+  background: rgba(44,62,80,0.85);
+  backdrop-filter: blur(10px);
 }
 .navbar.scrolled {
   background: var(--primary);
   padding: 6px 0;
-  box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.15);
+  backdrop-filter: blur(12px);
 }
 .nav-inner {
   max-width: 1200px;
@@ -101,16 +103,39 @@ body {
 .nav-links a {
   color: rgba(255,255,255,0.85);
   text-decoration: none;
-  padding: 8px 18px;
+  padding: 8px 14px;
   border-radius: var(--radius);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
   transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 .nav-links a:hover,
 .nav-links a.active {
   color: var(--white);
   background: rgba(255,255,255,0.1);
+}
+.nav-links a .animated-icon {
+  font-size: 0.9rem;
+  transition: transform 0.3s ease, color 0.3s ease;
+  animation: iconSlideIn 0.5s ease forwards;
+  opacity: 0;
+}
+.nav-links li:nth-child(1) .animated-icon { animation-delay: 0.05s; }
+.nav-links li:nth-child(2) .animated-icon { animation-delay: 0.1s; }
+.nav-links li:nth-child(3) .animated-icon { animation-delay: 0.15s; }
+.nav-links li:nth-child(4) .animated-icon { animation-delay: 0.2s; }
+.nav-links li:nth-child(5) .animated-icon { animation-delay: 0.25s; }
+.nav-links li:nth-child(6) .animated-icon { animation-delay: 0.3s; }
+.nav-links li:nth-child(7) .animated-icon { animation-delay: 0.35s; }
+.nav-links a:hover .animated-icon {
+  transform: translateY(-2px);
+  color: var(--secondary-blue);
+}
+.nav-links a.active .animated-icon {
+  color: var(--accent);
 }
 .nav-btn {
   background: var(--secondary-blue);
@@ -121,6 +146,12 @@ body {
 .nav-toggle {
   display: none;
 }
+
+@keyframes iconSlideIn {
+  0% { opacity: 0; transform: translateY(-6px) scale(0.8); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 
 /* ═══ HERO ══════════════════════════════════════════════ */
 .hero {

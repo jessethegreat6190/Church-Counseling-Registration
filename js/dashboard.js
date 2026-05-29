@@ -19,6 +19,15 @@ let isLoggedIn = false;
 
 document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
+var savedEmail = localStorage.getItem('adminEmail');
+var rememberEmail = localStorage.getItem('rememberEmail');
+if (savedEmail && rememberEmail !== 'false') {
+  document.getElementById('loginEmail').value = savedEmail;
+  document.getElementById('rememberEmail').checked = true;
+} else {
+  document.getElementById('rememberEmail').checked = false;
+}
+
 let authInitTimer = setTimeout(function() {
   window.location.href = 'index.html';
 }, 2000);
@@ -69,6 +78,15 @@ document.getElementById('loginForm').onsubmit = function(e) {
   const password = document.getElementById('loginPassword').value;
   const errorEl = document.getElementById('loginError');
   errorEl.style.display = 'none';
+
+  if (document.getElementById('rememberEmail').checked) {
+    localStorage.setItem('adminEmail', email);
+    localStorage.setItem('rememberEmail', 'true');
+  } else {
+    localStorage.removeItem('adminEmail');
+    localStorage.setItem('rememberEmail', 'false');
+  }
+
   auth.signInWithEmailAndPassword(email, password)
     .then(function(userCred) {
       if (userCred.user.uid !== ADMIN_UID) {
